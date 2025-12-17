@@ -1,0 +1,85 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
+
+import '../../../core/constant/app_image.dart';
+import '../../../core/context/global.dart';
+import '../../../core/providers/app_text.dart';
+import '../../../core/providers/domain/usecase/language_usecase.dart';
+import '../../../core/providers/language_provider/l10n_provider.dart';
+import '../../../core/router/router_key.dart';
+import '../../../core/services/hive_services/box_kes.dart';
+import '../../../core/widget/widget_daialog.dart';
+import '../../../injection_container.dart';
+
+class SplashProvider extends ChangeNotifier {
+  final LanguageUsecase languageUsecase;
+
+  SplashProvider({required this.languageUsecase}) {
+    Future.wait([getLanguage(), insitVedio()]);
+  }
+
+  late VideoPlayerController controller;
+
+  Future<void> insitVedio() async {
+    controller = VideoPlayerController.asset(Assets.imageWefixMotion)
+      ..initialize().then((_) {
+        controller.play();
+        controller.setLooping(false);
+        controller.addListener(() {
+          if (controller.value.isInitialized && !controller.value.isPlaying && controller.value.position >= controller.value.duration) {
+            getLanguage();
+          }
+        });
+      });
+  }
+
+  void init(BuildContext context) async {
+    await Future.delayed(const Duration(microseconds: 1000), () async {
+      final enableAuth = sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.enableAuth);
+      if (enableAuth != null) {
+        context.go(RouterKey.layout);
+      } else {
+        context.go(RouterKey.login);
+      }
+    });
+  }
+
+  Future<void> getLanguage() async {
+    try {
+      final resultTools = await languageUsecase.getLanguage();
+      resultTools.fold(
+        (failure) {
+          return SmartDialog.show(
+            builder:
+                (context) => WidgetDilog(
+                  isError: true,
+                  title: AppText(context).warning,
+                  message: failure.message,
+                  cancelText: AppText(context).back,
+                  onCancel: () => SmartDialog.dismiss(),
+                ),
+          );
+        },
+        (success) {
+          GlobalContext.context.read<LanguageProvider>().addLang(success.data?.languages ?? []);
+          notifyListeners();
+          init(GlobalContext.context);
+        },
+      );
+    } catch (e) {
+      log('Server Error in section Get Tools : $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+}

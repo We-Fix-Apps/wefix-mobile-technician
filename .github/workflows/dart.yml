@@ -1,0 +1,45 @@
+name: "WeFix SP"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: WeFix SP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.5'
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Build Release APK
+        run: flutter build apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: QA-Testing-APK
+          path: build/app/outputs/flutter-apk/app-release.apk

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Start Face ID -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Why is my app authenticating using face id ?</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<!-- Start Face ID -->
+
+	<!-- Start Location -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Wefix - Technicians needs your location to match you with nearby service requests and provide accurate navigation while driving.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Wefix - Technicians needs your location to match you with nearby service requests and provide accurate navigation while driving.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Wefix - Technicians uses your location to help you receive nearby jobs and optimize your routes while on duty.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wefix - Technicians uses your location to find nearby service requests and guide you to your destination.</string>
+	<!-- End Location -->
+
+	<!-- Start Screen Recording -->
+	<key>NSCameraUsageDescription</key>
+	<string>Wefix - Technicians needs access to your camera to scan QR codes and capture images when needed.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Wefix - Technicians needs access to your photo library to allow uploading or attaching images related to service requests.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Wefix - Technicians requires microphone access to record audio during screen recording for support or reporting purposes.</string>
+	<key>RPScreenRecordingUsageDescription</key>
+	<string>Wefix - Technicians needs screen recording permission to capture your screen for support, diagnostics, or training purposes.</string>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<!-- End Screen Recording -->
+	
+	<!-- Start Local Network -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Wefix - Technicians needs access to your local network to discover and connect with nearby devices and services essential for app functionality.</string>
+	<!-- End Local Network -->
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Wefix - Technicians</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Wefix - Technicians</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
+</plist>

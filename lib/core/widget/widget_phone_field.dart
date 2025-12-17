@@ -1,0 +1,328 @@
+import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
+import '../providers/app_text.dart';
+import '../unit/app_color.dart';
+import '../unit/app_text_style.dart';
+
+class WidgetPhoneField extends StatefulWidget {
+  final Function(PhoneNumber)? onCountryChanged;
+  final TextEditingController? phoneController;
+  final Function(String)? onFieldSubmitted;
+  final Function()? onSubmit;
+  final String? code;
+  final String? message;
+  final String? hint;
+  final Color? color;
+  final String? Function(String?)? validator;
+
+  const WidgetPhoneField({
+    super.key,
+    this.onCountryChanged,
+    this.phoneController,
+    this.code,
+    this.message,
+    this.onFieldSubmitted,
+    this.onSubmit,
+    this.validator,
+    this.color,
+    this.hint,
+  });
+
+  @override
+  State<WidgetPhoneField> createState() => _WidgetPhoneFieldState();
+}
+
+class _WidgetPhoneFieldState extends State<WidgetPhoneField> {
+  PhoneNumber number = PhoneNumber(isoCode: 'JO');
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.code != null) {
+      number = PhoneNumber(isoCode: widget.code!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant WidgetPhoneField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.code != null && widget.code != oldWidget.code) {
+      setState(() {
+        number = PhoneNumber(isoCode: widget.code!);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasText = widget.phoneController?.text.isNotEmpty ?? false;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: InternationalPhoneNumberInput(
+        validator: widget.validator,
+        onSubmit: widget.onSubmit,
+        errorMessage: widget.hint != null || hasText ? null : widget.message ?? AppText(context).required,
+        onFieldSubmitted: widget.onFieldSubmitted,
+        keyboardAction: TextInputAction.next,
+        hintText: widget.hint ?? 'XX XXXXXXX',
+        textStyle: AppTextStyle.style14,
+        isEnabled: widget.onCountryChanged != null,
+        spaceBetweenSelectorAndTextField: 10,
+        inputBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.white), borderRadius: BorderRadius.circular(7)),
+        inputDecoration: InputDecoration(
+          fillColor: widget.color ?? AppColor.white,
+          hintStyle: hasText ? AppTextStyle.style14.copyWith(color: AppColor.black) : AppTextStyle.style14,
+          hintText: widget.hint ?? 'XX XXXXXXX',
+          hintTextDirection: TextDirection.ltr,
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          border: OutlineInputBorder(
+            gapPadding: 0,
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          focusedBorder: OutlineInputBorder(
+            gapPadding: 0,
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          disabledBorder: OutlineInputBorder(
+            gapPadding: 0,
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          enabledBorder: OutlineInputBorder(
+            gapPadding: 0,
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          errorBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.red), borderRadius: BorderRadius.circular(7)),
+        ),
+        onInputChanged: widget.onCountryChanged,
+        countries: const [
+          'JO',
+          'AE',
+          'IQ',
+          'SA',
+          'QA',
+          'PS',
+          'PL',
+          'AD',
+          'AG',
+          'AR',
+          'AM',
+          'AU',
+          'AT',
+          'AZ',
+          'BS',
+          'BH',
+          'BD',
+          'BB',
+          'BY',
+          'BE',
+          'BZ',
+          'BJ',
+          'BT',
+          'BO',
+          'BA',
+          'BW',
+          'BR',
+          'BN',
+          'BG',
+          'BF',
+          'BI',
+          'CV',
+          'KH',
+          'CM',
+          'CA',
+          'CF',
+          'TD',
+          'CL',
+          'CN',
+          'CO',
+          'KM',
+          'CG',
+          'CD',
+          'CR',
+          'HR',
+          'CU',
+          'CY',
+          'CZ',
+          'DK',
+          'DJ',
+          'DM',
+          'DO',
+          'EC',
+          'EG',
+          'SV',
+          'GQ',
+          'ER',
+          'EE',
+          'ET',
+          'FJ',
+          'FI',
+          'FR',
+          'GA',
+          'GM',
+          'GE',
+          'DE',
+          'GH',
+          'GR',
+          'GD',
+          'GT',
+          'GN',
+          'GW',
+          'GY',
+          'HT',
+          'HN',
+          'HU',
+          'IN',
+          'ID',
+          'IR',
+          'IE',
+          'IT',
+          'JM',
+          'JP',
+          'KZ',
+          'KE',
+          'KI',
+          'KP',
+          'KR',
+          'KW',
+          'KG',
+          'LA',
+          'LV',
+          'LB',
+          'LS',
+          'LR',
+          'LY',
+          'LI',
+          'LT',
+          'LU',
+          'MG',
+          'MW',
+          'MY',
+          'MV',
+          'ML',
+          'MT',
+          'MH',
+          'MR',
+          'MU',
+          'MX',
+          'FM',
+          'MD',
+          'MC',
+          'MN',
+          'ME',
+          'MA',
+          'MZ',
+          'MM',
+          'NA',
+          'NR',
+          'NP',
+          'NL',
+          'NZ',
+          'NI',
+          'NE',
+          'NG',
+          'MK',
+          'NO',
+          'OM',
+          'PK',
+          'PW',
+          'PA',
+          'PG',
+          'PY',
+          'PE',
+          'PH',
+          'PT',
+          'RO',
+          'RU',
+          'RW',
+          'KN',
+          'LC',
+          'VC',
+          'WS',
+          'SM',
+          'ST',
+          'SN',
+          'RS',
+          'SC',
+          'SL',
+          'SG',
+          'SK',
+          'SI',
+          'SB',
+          'SO',
+          'ZA',
+          'SS',
+          'ES',
+          'LK',
+          'SD',
+          'SR',
+          'SZ',
+          'SE',
+          'CH',
+          'SY',
+          'TW',
+          'TJ',
+          'TZ',
+          'TH',
+          'TL',
+          'TG',
+          'TO',
+          'TT',
+          'TN',
+          'TR',
+          'TM',
+          'TV',
+          'UG',
+          'UA',
+          'GB',
+          'US',
+          'UY',
+          'UZ',
+          'VU',
+          'VA',
+          'VE',
+          'VN',
+          'YE',
+          'ZM',
+          'ZW',
+        ],
+        textAlignVertical: TextAlignVertical.center,
+        selectorConfig: const SelectorConfig(
+          trailingSpace: true,
+          useEmoji: true,
+          setSelectorButtonAsPrefixIcon: true,
+          leadingPadding: 15,
+          selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+        ),
+        searchBoxDecoration: InputDecoration(
+          fillColor: AppColor.white,
+          hintStyle: AppTextStyle.style14,
+          hintText: AppText(context).search,
+          suffixIcon: const Icon(Icons.search),
+          hintTextDirection: TextDirection.rtl,
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          border: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.grey), borderRadius: BorderRadius.circular(7)),
+          focusedBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.grey), borderRadius: BorderRadius.circular(7)),
+          disabledBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.grey), borderRadius: BorderRadius.circular(7)),
+          enabledBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.grey), borderRadius: BorderRadius.circular(7)),
+          errorBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.red), borderRadius: BorderRadius.circular(7)),
+        ),
+        ignoreBlank: false,
+        autoValidateMode:
+            widget.hint != null || (hasText && widget.phoneController?.text.length == 9) ? AutovalidateMode.disabled : AutovalidateMode.onUserInteraction,
+        initialValue: number,
+        textFieldController: widget.phoneController,
+        formatInput: false,
+        maxLength: 9,
+        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+      ),
+    );
+  }
+}

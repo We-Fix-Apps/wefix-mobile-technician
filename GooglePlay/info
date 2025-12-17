@@ -1,0 +1,4 @@
+storePassword=wefix2025
+keyPassword=wefix2025
+keyAlias=wefix
+storeFile=wefix-key.jks
