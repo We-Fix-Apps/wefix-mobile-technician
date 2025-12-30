@@ -24,7 +24,8 @@ class MaterialReoistoryImpl implements MaterialReoistory {
   @override
   Future<Either<Failure, Result<List<TicketMaterial>>>> ticketMaterial(String ticketId) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for ticket materials endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketMaterialResponse = await client.getRequest(endpoint: AppLinks.ticketsMaterials + ticketId, authorization: 'Bearer $token');
       MaterialModel ticketMaterial = MaterialModel.fromJson(ticketMaterialResponse.response.data);
@@ -39,7 +40,8 @@ class MaterialReoistoryImpl implements MaterialReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> ticketAddMaterial(CreateMaterialParams createMaterialParams) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for add material endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketAddMaterialResponse = await client.postRequest(
         endpoint: AppLinks.ticketsAddMaterials,
@@ -60,7 +62,8 @@ class MaterialReoistoryImpl implements MaterialReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> ticketDeleteMaterial(int id) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for delete material endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketAddMaterialResponse = await client.postRequest(endpoint: AppLinks.ticketsDeleteMaterials, body: {"Id": id}, authorization: 'Bearer $token');
       if (ticketAddMaterialResponse.response.data['status'] == false) {

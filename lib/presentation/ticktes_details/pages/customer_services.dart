@@ -37,17 +37,9 @@ class CustomerServices extends StatelessWidget {
                           '${index + 1}- ${lang == 'ar' ? (controller.ticketsDetails?.serviceTickets?[index].nameAr ?? '') : controller.ticketsDetails?.serviceTickets?[index].name ?? ''}',
                           style: AppTextStyle.style12B,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          spacing: 5,
-                          children: [
-                            Text(
-                              '${AppText(context).quantity}: X${controller.ticketsDetails?.serviceTickets?[index].quantity ?? '0'}',
-                              style: AppTextStyle.style12,
-                            ),
-                            Text('${controller.ticketsDetails?.serviceTickets?[index].price ?? ''} JOD', style: AppTextStyle.style12B),
-                          ],
+                        Text(
+                          '${AppText(context).quantity}: X${controller.ticketsDetails?.serviceTickets?[index].quantity ?? '0'}',
+                          style: AppTextStyle.style12,
                         ),
                       ],
                     ),

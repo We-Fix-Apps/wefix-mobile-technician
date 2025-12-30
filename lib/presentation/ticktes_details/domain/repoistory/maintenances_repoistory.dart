@@ -24,7 +24,8 @@ class MaintenancesRepoistoryImpl implements MaintenancesRepoistory {
   @override
   Future<Either<Failure, Result<List<MaintenancesList>>>> getMaintenancesList(String ticketId) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for maintenances list endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketMaintenancesResponse = await client.getRequest(endpoint: AppLinks.ticketsMaintenances + ticketId, authorization: 'Bearer $token');
       MaintenancesListModel ticketMaintenances = MaintenancesListModel.fromJson(ticketMaintenancesResponse.response.data);
@@ -39,7 +40,8 @@ class MaintenancesRepoistoryImpl implements MaintenancesRepoistory {
   @override
   Future<Either<Failure, Result<Unit>>> updateMaintenancesList(MaintenancParams params) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for update maintenances endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketAddMaintenanceslResponse = await client.postRequest(
         endpoint: AppLinks.ticketsCreateMaintenances,
@@ -62,7 +64,8 @@ class MaintenancesRepoistoryImpl implements MaintenancesRepoistory {
   @override
   Future<Either<Failure, Result<Unit>>> unSelectMaintenancesList(int id, int ticketId) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for unselect maintenances endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketAddMaintenanceslResponse = await client.postRequest(
         endpoint: AppLinks.unSelectMaintenances,
@@ -85,13 +88,18 @@ class MaintenancesRepoistoryImpl implements MaintenancesRepoistory {
   @override
   Future<Either<Failure, Result<List<dynamic>>>> getType() async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for type endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      final result = await client.getRequest(endpoint: AppLinks.type, authorization: 'Bearer $token');
-      if (result.response.data['status'] == false) {
+      // Backend-tmms route: GET /api/v1/company-data/ticket-types
+      final result = await client.getRequest(endpoint: 'company-data/ticket-types', authorization: 'Bearer $token');
+      if (result.response.statusCode == 200) {
+        // Backend-tmms returns: { success: true, data: [...] }
+        final types = result.response.data['data'] ?? result.response.data;
+        return Right(Result.success(types));
+      } else {
         return Left(ServerFailure.fromResponse(result.response.statusCode, message: result.response.data['message']));
       }
-      return Right(Result.success(result.response.data['type']));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
     } catch (e) {

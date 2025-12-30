@@ -21,11 +21,15 @@ class LayoutRepoistoryImpl implements LayoutRepoistory {
   @override
   Future<Either<Failure, Result<User>>> getProfile() async {
     try {
+      // Use SERVER_TMMS for profile endpoint (backend-tmms)
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      final ApiClient client = ApiClient(DioProvider().dio);
-      final response = await client.getRequest(endpoint: AppLinks.profile, authorization: 'Bearer $token');
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
+      // Backend-tmms route: GET /api/v1/user/profile
+      final response = await client.getRequest(endpoint: 'user/profile', authorization: 'Bearer $token');
       if (response.response.statusCode == 200) {
-        User userModel = User.fromJson(response.response.data['serviceProvider']);
+        // Backend-tmms returns: { profile: {...} }
+        final profileData = response.response.data['profile'] ?? response.response.data['data'] ?? response.response.data;
+        User userModel = User.fromJson(profileData);
         return Right(Result.success(userModel));
       } else {
         return Left(ServerFailure.fromResponse(response.response.statusCode));
@@ -40,14 +44,19 @@ class LayoutRepoistoryImpl implements LayoutRepoistory {
   @override
   Future<Either<Failure, Result<bool>>> checkAccess() async {
     try {
+      // Use SERVER_TMMS for check access endpoint (backend-tmms)
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      final ApiClient client = ApiClient(DioProvider().dio);
-      final response = await client.getRequest(endpoint: AppLinks.checkAccess, authorization: 'Bearer $token');
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
+      // Backend-tmms route: GET /api/v1/user/me (check user role)
+      final response = await client.getRequest(endpoint: 'user/me', authorization: 'Bearer $token');
       if (response.response.statusCode == 200) {
-        if (!response.response.data['status']) {
-          return Right(Result.success(false));
-        } else {
+        // Check if user has valid role (Technician 21 or Sub-Technician 22)
+        final userData = response.response.data['data'] ?? response.response.data['user'] ?? response.response.data;
+        final userRoleId = userData['userRoleId'] as int?;
+        if (userRoleId == 21 || userRoleId == 22) {
           return Right(Result.success(true));
+        } else {
+          return Right(Result.success(false));
         }
       } else {
         return Left(ServerFailure.fromResponse(response.response.statusCode));

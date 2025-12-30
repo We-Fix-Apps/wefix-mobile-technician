@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import '../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../core/router/router_key.dart';
 import '../../../core/services/hive_services/box_kes.dart';
 import '../../../core/unit/app_color.dart';
-import '../../../core/widget/widget_daialog.dart';
 import '../../../injection_container.dart';
 import '../controller/drawer/drawer_controller.dart';
 import '../widgets/widget_list_drawer.dart';
@@ -72,33 +70,6 @@ class DrawerWidget extends StatelessWidget {
                   ),
                   Divider(color: AppColor.grey.withOpacity(0.5), thickness: 0.5),
                   WidgetListDrawer(title: AppText(context).logout, icon: Assets.iconLogout, haveIconArrow: false, onTap: () => _logout(context)),
-                  Divider(color: AppColor.grey.withOpacity(0.5), thickness: 0.5),
-                  WidgetListDrawer(
-                    title: AppText(context).deleteAccount,
-                    icon: Assets.iconDeleteAccount,
-                    iconColor: AppColor.red,
-                    haveIconArrow: false,
-                    onTap: () {
-                      final rootContext = context;
-                      SmartDialog.show(
-                        builder:
-                            (context) => WidgetDilog(
-                              isError: true,
-                              title: AppText(context).deleteAccount,
-                              message: AppText(context).deleteAccountMessage,
-                              cancelText: AppText(context).cancel,
-                              confirmText: AppText(context).delete,
-                              onCancel: () {
-                                SmartDialog.dismiss();
-                              },
-                              onConfirm: () {
-                                SmartDialog.dismiss();
-                                _logout(rootContext);
-                              },
-                            ),
-                      );
-                    },
-                  ),
                   25.gap,
                 ],
               ),

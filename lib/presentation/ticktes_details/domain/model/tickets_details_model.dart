@@ -14,6 +14,7 @@ class TicketsDetailsModel with _$TicketsDetailsModel {
 class TicketsDetails with _$TicketsDetails {
   const factory TicketsDetails({
     @JsonKey(name: "id") int? id,
+    @JsonKey(name: "ticketCodeId") String? ticketCodeId,
     @JsonKey(name: "title") String? title,
     @JsonKey(name: "time") String? time,
     @JsonKey(name: "titleAr") String? titleAr,
@@ -34,12 +35,15 @@ class TicketsDetails with _$TicketsDetails {
     @JsonKey(name: "mobile") String? mobile,
     @JsonKey(name: "esitmatedTime") String? esitmatedTime,
     @JsonKey(name: "ticketAttatchments") List<TicketAttatchment>? ticketAttatchments,
+    @JsonKey(name: "technicianAttachments") List<TicketAttatchment>? technicianAttachments,
     @JsonKey(name: "ticketTools") List<TicketTool>? ticketTools,
     @JsonKey(name: "ticketImages") List<String>? ticketImages,
     @JsonKey(name: "ticketMaterials") List<TicketMaterial>? ticketMaterials,
     @JsonKey(name: "maintenanceTickets") List<MaintenanceTicket>? maintenanceTickets,
     @JsonKey(name: "servcieTickets") List<ServiceTicket>? serviceTickets,
     @JsonKey(name: "advantageTickets") List<AdvantageTickets>? advantageTickets,
+    @JsonKey(name: "createdBy") int? createdBy,
+    @JsonKey(name: "creator") CreatorInfo? creator,
   }) = _TicketsDetails;
 
   factory TicketsDetails.fromJson(Map<String, dynamic> json) => _$TicketsDetailsFromJson(json);
@@ -126,4 +130,18 @@ class AdvantageTickets with _$AdvantageTickets {
   }) = AadvantageTickets;
 
   factory AdvantageTickets.fromJson(Map<String, dynamic> json) => _$AdvantageTicketsFromJson(json);
+}
+
+@freezed
+class CreatorInfo with _$CreatorInfo {
+  const factory CreatorInfo({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "name") String? name,
+    @JsonKey(name: "userNumber") String? userNumber,
+    @JsonKey(name: "mobileNumber") String? mobileNumber,
+    @JsonKey(name: "countryCode") String? countryCode,
+    @JsonKey(name: "image") String? image,
+  }) = _CreatorInfo;
+
+  factory CreatorInfo.fromJson(Map<String, dynamic> json) => _$CreatorInfoFromJson(json);
 }

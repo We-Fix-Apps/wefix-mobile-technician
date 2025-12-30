@@ -11,13 +11,12 @@ import '../../../injection_container.dart';
 import '../controller/ticktes_details_controller.dart';
 import '../domain/ticket_enum.dart';
 import '../widgets/widget_button_ticket_details.dart';
-import 'advantage_tickets.dart';
 import 'containers/container_description_section.dart';
 import 'containers/container_attachments_section.dart';
 import 'containers/container_completion_checklist_section.dart';
 import 'containers/container_customer_section.dart';
 import 'containers/container_maintenance_section.dart';
-import 'containers/container_material_section.dart';
+// import 'containers/container_material_section.dart'; // Hidden: Required material section
 import 'containers/container_provider_attachment.dart';
 import 'containers/container_service_provide_section.dart';
 import 'containers/container_tools_section.dart';
@@ -61,7 +60,7 @@ class TicktesDetailsScreen extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 title: Text(
-                  '${AppText(context).ticket} #$id ${TicketDetailsType.emergency.name == controller.ticketsDetails?.type ? '🚨' : ''}',
+                  '${AppText(context).ticket} ${controller.ticketsDetails?.ticketCodeId ?? "#$id"} ${TicketDetailsType.emergency.name == controller.ticketsDetails?.type ? '🚨' : ''}',
                   style: AppTextStyle.style16B,
                 ),
                 centerTitle: true,
@@ -75,13 +74,13 @@ class TicktesDetailsScreen extends StatelessWidget {
                     const ContainerMaintenanceSection(),
                     const ContainerCustomerSection(),
                     if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) const CustomerServices(),
-                    if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) const AdvantageTickets(),
                     const ContainnerDescriptionSection(),
                     const ContainerServiceProvideSection(),
                     const ContainerAttachmentsSection(),
                     if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) ContainerProviderAttachment(id: id),
                     ContainerToolsSection(id: id),
-                    if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) ContainerMaterialSection(id: id),
+                    // Hidden: Required material section
+                    // if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) ContainerMaterialSection(id: id),
                     if (controller.ticketsDetails?.type == TicketDetailsType.preventive.name) ContainerCompletionChecklist(id: id),
                   ],
                 ),

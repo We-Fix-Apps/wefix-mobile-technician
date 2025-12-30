@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
@@ -23,10 +25,17 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
   @override
   Future<Either<Failure, Result<TicketsDetails>>> ticketDetails(String ticketId) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for ticket details endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      final ticketDetailsResponse = await client.getRequest(endpoint: AppLinks.tickets + ticketId, authorization: 'Bearer $token');
-      TicketsDetailsModel ticketDetails = TicketsDetailsModel.fromJson(ticketDetailsResponse.response.data);
+      // Backend-tmms route: GET /api/v1/tickets/:id
+      final ticketDetailsResponse = await client.getRequest(endpoint: 'tickets/$ticketId', authorization: 'Bearer $token');
+      
+      // Handle both direct data and wrapped response formats
+      final responseData = ticketDetailsResponse.response.data;
+      final data = responseData['data'] ?? responseData;
+      
+      TicketsDetailsModel ticketDetails = TicketsDetailsModel.fromJson(data);
       return Right(Result.success(ticketDetails.ticketsDetails));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
@@ -38,9 +47,11 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> startTickets(String ticketId) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for start ticket endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      await client.postRequest(endpoint: AppLinks.startTickets, body: {'Id': ticketId}, authorization: 'Bearer $token');
+      // Backend-tmms route: POST /api/v1/tickets/start
+      await client.postRequest(endpoint: 'tickets/start', body: {'Id': ticketId}, authorization: 'Bearer $token');
       return Right(Result.success(unit));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
@@ -52,11 +63,32 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> completeTicket(String ticketId, String note, String signature, String link) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for complete ticket endpoint (backend-tmms)
+      // Backend-tmms route: PUT /api/v1/tickets/:id (update ticketStatusId to "Completed")
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      await client.postRequest(
-        endpoint: AppLinks.completeTickets,
-        body: {'Id': ticketId, 'SpNote': note, 'Signature': signature, 'VideoLink': link},
+      
+      // First, get ticket statuses to find "Completed" status ID
+      final statusesResponse = await client.getRequest(endpoint: 'company-data/ticket-statuses', authorization: 'Bearer $token');
+      final statuses = statusesResponse.response.data['data'] ?? statusesResponse.response.data;
+      final completedStatus = (statuses as List).firstWhere(
+        (status) => (status['name'] as String?)?.toLowerCase() == 'completed',
+        orElse: () => null,
+      );
+      
+      if (completedStatus == null) {
+        return Left(ServerFailure(message: 'Completed status not found'));
+      }
+      
+      final completedStatusId = completedStatus['id'] as int;
+      
+      // Update ticket with completed status and note
+      await client.putRequest(
+        endpoint: 'tickets/$ticketId',
+        body: {
+          'ticketStatusId': completedStatusId,
+          'serviceDescription': note, // Store note in serviceDescription
+        },
         authorization: 'Bearer $token',
       );
       return Right(Result.success(unit));
@@ -70,9 +102,80 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> createTicketImage(String ticketId, List<String> images) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for create ticket image endpoint (backend-tmms)
+      // Backend-tmms route: POST /api/v1/files/upload (for each image)
+      // Files are automatically linked to tickets via entityId and entityType
+      if (images.isEmpty) {
+        return Right(Result.success(unit));
+      }
+      
+      final dio = DioProvider().dio;
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
-      await client.postRequest(endpoint: AppLinks.createTicketImage, body: {'TicketId': ticketId, 'Images': images}, authorization: 'Bearer $token');
+      final baseUrl = AppLinks.serverTMMS;
+      
+      // Upload each image
+      for (String imagePath in images) {
+        // Check if imagePath is a file path or URL
+        File? imageFile;
+        
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+          // If it's a URL, download it first
+          final response = await dio.get(
+            imagePath,
+            options: Options(responseType: ResponseType.bytes),
+          );
+          
+          // Create a temporary file
+          final tempDir = Directory.systemTemp;
+          final tempFile = File('${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.jpg');
+          await tempFile.writeAsBytes(response.data);
+          imageFile = tempFile;
+        } else {
+          // If it's a file path, use it directly
+          imageFile = File(imagePath);
+          if (!await imageFile.exists()) {
+            continue; // Skip if file doesn't exist
+          }
+        }
+        
+        // Create FormData with file and referenceId
+        final formData = FormData.fromMap({
+          'file': await MultipartFile.fromFile(
+            imageFile.path,
+            filename: imageFile.path.split('/').last,
+          ),
+          'referenceId': ticketId,
+          'referenceType': 'TICKET_ATTACHMENT',
+          'entityType': 'ticket',
+        });
+        
+        // Upload file to backend-tmms
+        // Note: baseUrl already includes /api/v1 (e.g., https://wefix-backend-tmms.ngrok.app/api/v1)
+        // So we just need to append /files/upload
+        final uploadUrl = baseUrl.endsWith('/') 
+            ? '${baseUrl}files/upload'
+            : '$baseUrl/files/upload';
+        
+        await dio.post(
+          uploadUrl,
+          data: formData,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+        
+        // Clean up temporary file if it was downloaded
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+          try {
+            await imageFile.delete();
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+        }
+      }
+      
       return Right(Result.success(unit));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));

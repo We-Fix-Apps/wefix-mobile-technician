@@ -6,6 +6,7 @@ import '../../../../core/providers/app_text.dart';
 import '../../../../core/unit/app_color.dart';
 import '../../../../core/unit/app_text_style.dart';
 import '../../controller/ticktes_details_controller.dart';
+import '../../domain/ticket_enum.dart';
 import '../../widgets/widget_attchmants.dart';
 
 class ContainerProviderAttachment extends StatelessWidget {
@@ -22,7 +23,7 @@ class ContainerProviderAttachment extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('📷 ${AppText(context).serviceProviderAttachment}', style: AppTextStyle.style14B),
+                  Text('📷 ${AppText(context).technicianAttachment}', style: AppTextStyle.style14B),
                   InkWell(
                     onTap: () => value.selectMethodForImage(isAdd: true, ticketId: id),
                     child: Container(
@@ -35,16 +36,32 @@ class ContainerProviderAttachment extends StatelessWidget {
               ),
               Divider(color: AppColor.grey.withOpacity(.4), thickness: 1, height: 20),
               10.gap,
-              ValueListenableBuilder<List<String>>(
-                valueListenable: value.imagesAttachment,
-                builder:
-                    (context, value, child) => ListView.separated(
-                      itemCount: value.length,
-                      separatorBuilder: (context, index) => 10.gap,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => WidgetAttachmants(url: value[index]),
+              ValueListenableBuilder(
+                valueListenable: value.ticketStatue,
+                builder: (context, status, child) {
+                  final technicianAttachments = value.ticketsDetails?.technicianAttachments ?? [];
+                  
+                  if (status == TicketStatus.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  if (technicianAttachments.isEmpty) {
+                    return Text(
+                      AppText(context).emptyAttachments,
+                      style: AppTextStyle.style14B.copyWith(color: AppColor.grey),
+                    );
+                  }
+                  
+                  return ListView.separated(
+                    itemCount: technicianAttachments.length,
+                    separatorBuilder: (context, index) => 10.gap,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => WidgetAttachmants(
+                      url: technicianAttachments[index].filePath ?? '',
                     ),
+                  );
+                },
               ),
               10.gap,
             ],

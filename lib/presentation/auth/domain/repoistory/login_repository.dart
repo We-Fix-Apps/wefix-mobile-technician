@@ -174,7 +174,7 @@ class LoginRepositoryImpl implements LoginRepository {
           } else {
             // WeFix Team response format (use existing format)
             UserModel userModel = UserModel.fromJson(responseData);
-            return Right(Result.success(userModel));
+          return Right(Result.success(userModel));
           }
         } else {
           String errorMessage = sendOtpResponse.response.data['message'] ?? 

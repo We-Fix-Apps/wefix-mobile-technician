@@ -18,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constant/app_image.dart';
+import '../../../core/constant/app_links.dart';
 import '../../../core/context/global.dart';
 import '../../../core/extension/gap.dart';
 import '../../../core/function/app_size.dart';
@@ -115,6 +116,25 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
   // ! Function get ticket details
   Future<void> ticketDetails(String id) async {
     try {
+      // Check if user is B2B Team - only B2B users can access ticket details
+      final userTeam = sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.userTeam);
+      if (userTeam != 'B2B Team') {
+        ticketStatue.value = TicketStatus.failure;
+        SmartDialog.show(
+          builder: (context) => WidgetDilog(
+            isError: true,
+            title: AppText(context).warning,
+            message: AppText(context).accessDeniedTechniciansOnly,
+            cancelText: AppText(context).back,
+            onCancel: () {
+              SmartDialog.dismiss();
+              GlobalContext.context.pop();
+            },
+          ),
+        );
+        return;
+      }
+      
       ticketStatue.value = TicketStatus.loading;
       final result = await ticketUsecase.ticketDetails(id);
       result.fold(
@@ -489,8 +509,37 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
   }
 
   void launchAttachmants(String url) async {
-    final urls = Uri.parse(url);
-    await launchUrl(urls);
+    try {
+      // If URL is relative (starts with /), construct full URL using backend-tmms base URL
+      String fullUrl = url;
+      if (url.startsWith('/')) {
+        // Get base URL from SERVER_TMMS (remove /api/v1 if present)
+        String baseUrl = AppLinks.serverTMMS;
+        if (baseUrl.contains('/api/v1')) {
+          baseUrl = baseUrl.replaceAll('/api/v1', '');
+        }
+        // Remove trailing slash if present
+        baseUrl = baseUrl.replaceAll(RegExp(r'/$'), '');
+        fullUrl = '$baseUrl$url';
+      } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        // If it's not a full URL and doesn't start with /, try to construct it
+        String baseUrl = AppLinks.serverTMMS;
+        if (baseUrl.contains('/api/v1')) {
+          baseUrl = baseUrl.replaceAll('/api/v1', '');
+        }
+        baseUrl = baseUrl.replaceAll(RegExp(r'/$'), '');
+        fullUrl = '$baseUrl/$url';
+      }
+      
+      log('Launching attachment URL: $fullUrl');
+      final uris = Uri.parse(fullUrl);
+      final launched = await launchUrl(uris, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        log('Failed to launch attachment URL: $fullUrl');
+      }
+    } catch (e) {
+      log('Error launching attachment: $e');
+    }
   }
 
   // * ==============================  Launch URL ==============================
@@ -501,7 +550,29 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
   }
 
   void launchCall() async {
-    final url = 'tel:00${ticketsDetails?.mobile?.replaceAll('+', '')}';
+    // Use creator's phone number for B2B tickets
+    final creator = ticketsDetails?.creator;
+    String? phoneNumber;
+    
+    if (creator?.mobileNumber != null && creator?.countryCode != null) {
+      // Combine country code and mobile number
+      phoneNumber = '${creator!.countryCode}${creator.mobileNumber}';
+    } else if (creator?.mobileNumber != null) {
+      // Use mobile number as is if no country code
+      phoneNumber = creator!.mobileNumber;
+    }
+    
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      return; // No phone number available
+    }
+    
+    // Remove any existing + or 00 prefix and add tel: prefix
+    phoneNumber = phoneNumber.replaceAll('+', '').replaceAll(' ', '');
+    if (phoneNumber.startsWith('00')) {
+      phoneNumber = phoneNumber.substring(2);
+    }
+    
+    final url = 'tel:$phoneNumber';
     final uris = Uri.parse(url);
     await launchUrl(uris);
   }

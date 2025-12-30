@@ -68,7 +68,7 @@ class ContainerOrdersRequiest extends StatelessWidget {
                               50.gap,
                               SvgPicture.asset(Assets.iconTickets, width: 120, height: 120, color: AppColor.secondColor.withOpacity(0.5)),
                               15.gap,
-                              Text('Empty Tickets', style: AppTextStyle.style22B.copyWith(color: AppColor.primaryColor)),
+                              Text(AppText(context).noAssignedTickets, style: AppTextStyle.style22B.copyWith(color: AppColor.primaryColor)),
                             ],
                           ),
                         );
@@ -85,6 +85,22 @@ class ContainerOrdersRequiest extends StatelessWidget {
                         );
                       }
 
+                    case HomeStatus.failuer:
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            50.gap,
+                            SvgPicture.asset(Assets.iconTickets, width: 120, height: 120, color: AppColor.red.withOpacity(0.5)),
+                            15.gap,
+                            Text(AppText(context).systemUnavailablePleaseTryAgainLater, 
+                              style: AppTextStyle.style16.copyWith(color: AppColor.red),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      );
                     default:
                       return const SizedBox.shrink();
                   }

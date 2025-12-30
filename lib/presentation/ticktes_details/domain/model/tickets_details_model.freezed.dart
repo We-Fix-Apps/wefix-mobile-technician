@@ -183,6 +183,8 @@ TicketsDetails _$TicketsDetailsFromJson(Map<String, dynamic> json) {
 mixin _$TicketsDetails {
   @JsonKey(name: "id")
   int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: "ticketCodeId")
+  String? get ticketCodeId => throw _privateConstructorUsedError;
   @JsonKey(name: "title")
   String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: "time")
@@ -224,6 +226,9 @@ mixin _$TicketsDetails {
   @JsonKey(name: "ticketAttatchments")
   List<TicketAttatchment>? get ticketAttatchments =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: "technicianAttachments")
+  List<TicketAttatchment>? get technicianAttachments =>
+      throw _privateConstructorUsedError;
   @JsonKey(name: "ticketTools")
   List<TicketTool>? get ticketTools => throw _privateConstructorUsedError;
   @JsonKey(name: "ticketImages")
@@ -239,6 +244,10 @@ mixin _$TicketsDetails {
   @JsonKey(name: "advantageTickets")
   List<AdvantageTickets>? get advantageTickets =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: "createdBy")
+  int? get createdBy => throw _privateConstructorUsedError;
+  @JsonKey(name: "creator")
+  CreatorInfo? get creator => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -254,6 +263,7 @@ abstract class $TicketsDetailsCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: "id") int? id,
+      @JsonKey(name: "ticketCodeId") String? ticketCodeId,
       @JsonKey(name: "title") String? title,
       @JsonKey(name: "time") String? time,
       @JsonKey(name: "titleAr") String? titleAr,
@@ -275,6 +285,8 @@ abstract class $TicketsDetailsCopyWith<$Res> {
       @JsonKey(name: "esitmatedTime") String? esitmatedTime,
       @JsonKey(name: "ticketAttatchments")
       List<TicketAttatchment>? ticketAttatchments,
+      @JsonKey(name: "technicianAttachments")
+      List<TicketAttatchment>? technicianAttachments,
       @JsonKey(name: "ticketTools") List<TicketTool>? ticketTools,
       @JsonKey(name: "ticketImages") List<String>? ticketImages,
       @JsonKey(name: "ticketMaterials") List<TicketMaterial>? ticketMaterials,
@@ -282,7 +294,11 @@ abstract class $TicketsDetailsCopyWith<$Res> {
       List<MaintenanceTicket>? maintenanceTickets,
       @JsonKey(name: "servcieTickets") List<ServiceTicket>? serviceTickets,
       @JsonKey(name: "advantageTickets")
-      List<AdvantageTickets>? advantageTickets});
+      List<AdvantageTickets>? advantageTickets,
+      @JsonKey(name: "createdBy") int? createdBy,
+      @JsonKey(name: "creator") CreatorInfo? creator});
+
+  $CreatorInfoCopyWith<$Res>? get creator;
 }
 
 /// @nodoc
@@ -299,6 +315,7 @@ class _$TicketsDetailsCopyWithImpl<$Res, $Val extends TicketsDetails>
   @override
   $Res call({
     Object? id = freezed,
+    Object? ticketCodeId = freezed,
     Object? title = freezed,
     Object? time = freezed,
     Object? titleAr = freezed,
@@ -319,18 +336,25 @@ class _$TicketsDetailsCopyWithImpl<$Res, $Val extends TicketsDetails>
     Object? mobile = freezed,
     Object? esitmatedTime = freezed,
     Object? ticketAttatchments = freezed,
+    Object? technicianAttachments = freezed,
     Object? ticketTools = freezed,
     Object? ticketImages = freezed,
     Object? ticketMaterials = freezed,
     Object? maintenanceTickets = freezed,
     Object? serviceTickets = freezed,
     Object? advantageTickets = freezed,
+    Object? createdBy = freezed,
+    Object? creator = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      ticketCodeId: freezed == ticketCodeId
+          ? _value.ticketCodeId
+          : ticketCodeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -411,6 +435,10 @@ class _$TicketsDetailsCopyWithImpl<$Res, $Val extends TicketsDetails>
           ? _value.ticketAttatchments
           : ticketAttatchments // ignore: cast_nullable_to_non_nullable
               as List<TicketAttatchment>?,
+      technicianAttachments: freezed == technicianAttachments
+          ? _value.technicianAttachments
+          : technicianAttachments // ignore: cast_nullable_to_non_nullable
+              as List<TicketAttatchment>?,
       ticketTools: freezed == ticketTools
           ? _value.ticketTools
           : ticketTools // ignore: cast_nullable_to_non_nullable
@@ -435,7 +463,27 @@ class _$TicketsDetailsCopyWithImpl<$Res, $Val extends TicketsDetails>
           ? _value.advantageTickets
           : advantageTickets // ignore: cast_nullable_to_non_nullable
               as List<AdvantageTickets>?,
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as int?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as CreatorInfo?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $CreatorInfoCopyWith<$Res>? get creator {
+    if (_value.creator == null) {
+      return null;
+    }
+
+    return $CreatorInfoCopyWith<$Res>(_value.creator!, (value) {
+      return _then(_value.copyWith(creator: value) as $Val);
+    });
   }
 }
 
@@ -449,6 +497,7 @@ abstract class _$$TicketsDetailsImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: "id") int? id,
+      @JsonKey(name: "ticketCodeId") String? ticketCodeId,
       @JsonKey(name: "title") String? title,
       @JsonKey(name: "time") String? time,
       @JsonKey(name: "titleAr") String? titleAr,
@@ -470,6 +519,8 @@ abstract class _$$TicketsDetailsImplCopyWith<$Res>
       @JsonKey(name: "esitmatedTime") String? esitmatedTime,
       @JsonKey(name: "ticketAttatchments")
       List<TicketAttatchment>? ticketAttatchments,
+      @JsonKey(name: "technicianAttachments")
+      List<TicketAttatchment>? technicianAttachments,
       @JsonKey(name: "ticketTools") List<TicketTool>? ticketTools,
       @JsonKey(name: "ticketImages") List<String>? ticketImages,
       @JsonKey(name: "ticketMaterials") List<TicketMaterial>? ticketMaterials,
@@ -477,7 +528,12 @@ abstract class _$$TicketsDetailsImplCopyWith<$Res>
       List<MaintenanceTicket>? maintenanceTickets,
       @JsonKey(name: "servcieTickets") List<ServiceTicket>? serviceTickets,
       @JsonKey(name: "advantageTickets")
-      List<AdvantageTickets>? advantageTickets});
+      List<AdvantageTickets>? advantageTickets,
+      @JsonKey(name: "createdBy") int? createdBy,
+      @JsonKey(name: "creator") CreatorInfo? creator});
+
+  @override
+  $CreatorInfoCopyWith<$Res>? get creator;
 }
 
 /// @nodoc
@@ -492,6 +548,7 @@ class __$$TicketsDetailsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? ticketCodeId = freezed,
     Object? title = freezed,
     Object? time = freezed,
     Object? titleAr = freezed,
@@ -512,18 +569,25 @@ class __$$TicketsDetailsImplCopyWithImpl<$Res>
     Object? mobile = freezed,
     Object? esitmatedTime = freezed,
     Object? ticketAttatchments = freezed,
+    Object? technicianAttachments = freezed,
     Object? ticketTools = freezed,
     Object? ticketImages = freezed,
     Object? ticketMaterials = freezed,
     Object? maintenanceTickets = freezed,
     Object? serviceTickets = freezed,
     Object? advantageTickets = freezed,
+    Object? createdBy = freezed,
+    Object? creator = freezed,
   }) {
     return _then(_$TicketsDetailsImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      ticketCodeId: freezed == ticketCodeId
+          ? _value.ticketCodeId
+          : ticketCodeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -604,6 +668,10 @@ class __$$TicketsDetailsImplCopyWithImpl<$Res>
           ? _value._ticketAttatchments
           : ticketAttatchments // ignore: cast_nullable_to_non_nullable
               as List<TicketAttatchment>?,
+      technicianAttachments: freezed == technicianAttachments
+          ? _value._technicianAttachments
+          : technicianAttachments // ignore: cast_nullable_to_non_nullable
+              as List<TicketAttatchment>?,
       ticketTools: freezed == ticketTools
           ? _value._ticketTools
           : ticketTools // ignore: cast_nullable_to_non_nullable
@@ -628,6 +696,14 @@ class __$$TicketsDetailsImplCopyWithImpl<$Res>
           ? _value._advantageTickets
           : advantageTickets // ignore: cast_nullable_to_non_nullable
               as List<AdvantageTickets>?,
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as int?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as CreatorInfo?,
     ));
   }
 }
@@ -637,6 +713,7 @@ class __$$TicketsDetailsImplCopyWithImpl<$Res>
 class _$TicketsDetailsImpl implements _TicketsDetails {
   const _$TicketsDetailsImpl(
       {@JsonKey(name: "id") this.id,
+      @JsonKey(name: "ticketCodeId") this.ticketCodeId,
       @JsonKey(name: "title") this.title,
       @JsonKey(name: "time") this.time,
       @JsonKey(name: "titleAr") this.titleAr,
@@ -658,6 +735,8 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
       @JsonKey(name: "esitmatedTime") this.esitmatedTime,
       @JsonKey(name: "ticketAttatchments")
       final List<TicketAttatchment>? ticketAttatchments,
+      @JsonKey(name: "technicianAttachments")
+      final List<TicketAttatchment>? technicianAttachments,
       @JsonKey(name: "ticketTools") final List<TicketTool>? ticketTools,
       @JsonKey(name: "ticketImages") final List<String>? ticketImages,
       @JsonKey(name: "ticketMaterials")
@@ -667,8 +746,11 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
       @JsonKey(name: "servcieTickets")
       final List<ServiceTicket>? serviceTickets,
       @JsonKey(name: "advantageTickets")
-      final List<AdvantageTickets>? advantageTickets})
+      final List<AdvantageTickets>? advantageTickets,
+      @JsonKey(name: "createdBy") this.createdBy,
+      @JsonKey(name: "creator") this.creator})
       : _ticketAttatchments = ticketAttatchments,
+        _technicianAttachments = technicianAttachments,
         _ticketTools = ticketTools,
         _ticketImages = ticketImages,
         _ticketMaterials = ticketMaterials,
@@ -682,6 +764,9 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
   @override
   @JsonKey(name: "id")
   final int? id;
+  @override
+  @JsonKey(name: "ticketCodeId")
+  final String? ticketCodeId;
   @override
   @JsonKey(name: "title")
   final String? title;
@@ -747,6 +832,18 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
     if (value == null) return null;
     if (_ticketAttatchments is EqualUnmodifiableListView)
       return _ticketAttatchments;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<TicketAttatchment>? _technicianAttachments;
+  @override
+  @JsonKey(name: "technicianAttachments")
+  List<TicketAttatchment>? get technicianAttachments {
+    final value = _technicianAttachments;
+    if (value == null) return null;
+    if (_technicianAttachments is EqualUnmodifiableListView)
+      return _technicianAttachments;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -820,8 +917,15 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
   }
 
   @override
+  @JsonKey(name: "createdBy")
+  final int? createdBy;
+  @override
+  @JsonKey(name: "creator")
+  final CreatorInfo? creator;
+
+  @override
   String toString() {
-    return 'TicketsDetails(id: $id, title: $title, time: $time, titleAr: $titleAr, type: $type, typeAr: $typeAr, userId: $userId, date: $date, reportLink: $reportLink, status: $status, customerName: $customerName, customerImage: $customerImage, customerAddress: $customerAddress, description: $description, isWithMaterial: $isWithMaterial, isWithFemale: $isWithFemale, latitudel: $latitudel, longitude: $longitude, mobile: $mobile, esitmatedTime: $esitmatedTime, ticketAttatchments: $ticketAttatchments, ticketTools: $ticketTools, ticketImages: $ticketImages, ticketMaterials: $ticketMaterials, maintenanceTickets: $maintenanceTickets, serviceTickets: $serviceTickets, advantageTickets: $advantageTickets)';
+    return 'TicketsDetails(id: $id, ticketCodeId: $ticketCodeId, title: $title, time: $time, titleAr: $titleAr, type: $type, typeAr: $typeAr, userId: $userId, date: $date, reportLink: $reportLink, status: $status, customerName: $customerName, customerImage: $customerImage, customerAddress: $customerAddress, description: $description, isWithMaterial: $isWithMaterial, isWithFemale: $isWithFemale, latitudel: $latitudel, longitude: $longitude, mobile: $mobile, esitmatedTime: $esitmatedTime, ticketAttatchments: $ticketAttatchments, technicianAttachments: $technicianAttachments, ticketTools: $ticketTools, ticketImages: $ticketImages, ticketMaterials: $ticketMaterials, maintenanceTickets: $maintenanceTickets, serviceTickets: $serviceTickets, advantageTickets: $advantageTickets, createdBy: $createdBy, creator: $creator)';
   }
 
   @override
@@ -830,6 +934,8 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
         (other.runtimeType == runtimeType &&
             other is _$TicketsDetailsImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.ticketCodeId, ticketCodeId) ||
+                other.ticketCodeId == ticketCodeId) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.titleAr, titleAr) || other.titleAr == titleAr) &&
@@ -862,6 +968,8 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
             const DeepCollectionEquality()
                 .equals(other._ticketAttatchments, _ticketAttatchments) &&
             const DeepCollectionEquality()
+                .equals(other._technicianAttachments, _technicianAttachments) &&
+            const DeepCollectionEquality()
                 .equals(other._ticketTools, _ticketTools) &&
             const DeepCollectionEquality()
                 .equals(other._ticketImages, _ticketImages) &&
@@ -872,7 +980,10 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
             const DeepCollectionEquality()
                 .equals(other._serviceTickets, _serviceTickets) &&
             const DeepCollectionEquality()
-                .equals(other._advantageTickets, _advantageTickets));
+                .equals(other._advantageTickets, _advantageTickets) &&
+            (identical(other.createdBy, createdBy) ||
+                other.createdBy == createdBy) &&
+            (identical(other.creator, creator) || other.creator == creator));
   }
 
   @JsonKey(ignore: true)
@@ -880,6 +991,7 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
   int get hashCode => Object.hashAll([
         runtimeType,
         id,
+        ticketCodeId,
         title,
         time,
         titleAr,
@@ -900,12 +1012,15 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
         mobile,
         esitmatedTime,
         const DeepCollectionEquality().hash(_ticketAttatchments),
+        const DeepCollectionEquality().hash(_technicianAttachments),
         const DeepCollectionEquality().hash(_ticketTools),
         const DeepCollectionEquality().hash(_ticketImages),
         const DeepCollectionEquality().hash(_ticketMaterials),
         const DeepCollectionEquality().hash(_maintenanceTickets),
         const DeepCollectionEquality().hash(_serviceTickets),
-        const DeepCollectionEquality().hash(_advantageTickets)
+        const DeepCollectionEquality().hash(_advantageTickets),
+        createdBy,
+        creator
       ]);
 
   @JsonKey(ignore: true)
@@ -925,38 +1040,44 @@ class _$TicketsDetailsImpl implements _TicketsDetails {
 
 abstract class _TicketsDetails implements TicketsDetails {
   const factory _TicketsDetails(
-      {@JsonKey(name: "id") final int? id,
-      @JsonKey(name: "title") final String? title,
-      @JsonKey(name: "time") final String? time,
-      @JsonKey(name: "titleAr") final String? titleAr,
-      @JsonKey(name: "type") final String? type,
-      @JsonKey(name: "typeAr") final String? typeAr,
-      @JsonKey(name: "userId") final int? userId,
-      @JsonKey(name: "date") final DateTime? date,
-      @JsonKey(name: "reportLink") final String? reportLink,
-      @JsonKey(name: "status") final String? status,
-      @JsonKey(name: "customerName") final String? customerName,
-      @JsonKey(name: "customerImage") final String? customerImage,
-      @JsonKey(name: "customerAddress") final String? customerAddress,
-      @JsonKey(name: "description") final String? description,
-      @JsonKey(name: "isWithMaterial") final bool? isWithMaterial,
-      @JsonKey(name: "isWithFemale") final bool? isWithFemale,
-      @JsonKey(name: "latitudel") final String? latitudel,
-      @JsonKey(name: "longitude") final String? longitude,
-      @JsonKey(name: "mobile") final String? mobile,
-      @JsonKey(name: "esitmatedTime") final String? esitmatedTime,
-      @JsonKey(name: "ticketAttatchments")
-      final List<TicketAttatchment>? ticketAttatchments,
-      @JsonKey(name: "ticketTools") final List<TicketTool>? ticketTools,
-      @JsonKey(name: "ticketImages") final List<String>? ticketImages,
-      @JsonKey(name: "ticketMaterials")
-      final List<TicketMaterial>? ticketMaterials,
-      @JsonKey(name: "maintenanceTickets")
-      final List<MaintenanceTicket>? maintenanceTickets,
-      @JsonKey(name: "servcieTickets")
-      final List<ServiceTicket>? serviceTickets,
-      @JsonKey(name: "advantageTickets")
-      final List<AdvantageTickets>? advantageTickets}) = _$TicketsDetailsImpl;
+          {@JsonKey(name: "id") final int? id,
+          @JsonKey(name: "ticketCodeId") final String? ticketCodeId,
+          @JsonKey(name: "title") final String? title,
+          @JsonKey(name: "time") final String? time,
+          @JsonKey(name: "titleAr") final String? titleAr,
+          @JsonKey(name: "type") final String? type,
+          @JsonKey(name: "typeAr") final String? typeAr,
+          @JsonKey(name: "userId") final int? userId,
+          @JsonKey(name: "date") final DateTime? date,
+          @JsonKey(name: "reportLink") final String? reportLink,
+          @JsonKey(name: "status") final String? status,
+          @JsonKey(name: "customerName") final String? customerName,
+          @JsonKey(name: "customerImage") final String? customerImage,
+          @JsonKey(name: "customerAddress") final String? customerAddress,
+          @JsonKey(name: "description") final String? description,
+          @JsonKey(name: "isWithMaterial") final bool? isWithMaterial,
+          @JsonKey(name: "isWithFemale") final bool? isWithFemale,
+          @JsonKey(name: "latitudel") final String? latitudel,
+          @JsonKey(name: "longitude") final String? longitude,
+          @JsonKey(name: "mobile") final String? mobile,
+          @JsonKey(name: "esitmatedTime") final String? esitmatedTime,
+          @JsonKey(name: "ticketAttatchments")
+          final List<TicketAttatchment>? ticketAttatchments,
+          @JsonKey(name: "technicianAttachments")
+          final List<TicketAttatchment>? technicianAttachments,
+          @JsonKey(name: "ticketTools") final List<TicketTool>? ticketTools,
+          @JsonKey(name: "ticketImages") final List<String>? ticketImages,
+          @JsonKey(name: "ticketMaterials")
+          final List<TicketMaterial>? ticketMaterials,
+          @JsonKey(name: "maintenanceTickets")
+          final List<MaintenanceTicket>? maintenanceTickets,
+          @JsonKey(name: "servcieTickets")
+          final List<ServiceTicket>? serviceTickets,
+          @JsonKey(name: "advantageTickets")
+          final List<AdvantageTickets>? advantageTickets,
+          @JsonKey(name: "createdBy") final int? createdBy,
+          @JsonKey(name: "creator") final CreatorInfo? creator}) =
+      _$TicketsDetailsImpl;
 
   factory _TicketsDetails.fromJson(Map<String, dynamic> json) =
       _$TicketsDetailsImpl.fromJson;
@@ -964,6 +1085,9 @@ abstract class _TicketsDetails implements TicketsDetails {
   @override
   @JsonKey(name: "id")
   int? get id;
+  @override
+  @JsonKey(name: "ticketCodeId")
+  String? get ticketCodeId;
   @override
   @JsonKey(name: "title")
   String? get title;
@@ -1025,6 +1149,9 @@ abstract class _TicketsDetails implements TicketsDetails {
   @JsonKey(name: "ticketAttatchments")
   List<TicketAttatchment>? get ticketAttatchments;
   @override
+  @JsonKey(name: "technicianAttachments")
+  List<TicketAttatchment>? get technicianAttachments;
+  @override
   @JsonKey(name: "ticketTools")
   List<TicketTool>? get ticketTools;
   @override
@@ -1042,6 +1169,12 @@ abstract class _TicketsDetails implements TicketsDetails {
   @override
   @JsonKey(name: "advantageTickets")
   List<AdvantageTickets>? get advantageTickets;
+  @override
+  @JsonKey(name: "createdBy")
+  int? get createdBy;
+  @override
+  @JsonKey(name: "creator")
+  CreatorInfo? get creator;
   @override
   @JsonKey(ignore: true)
   _$$TicketsDetailsImplCopyWith<_$TicketsDetailsImpl> get copyWith =>
@@ -2594,5 +2727,267 @@ abstract class AadvantageTickets implements AdvantageTickets {
   @override
   @JsonKey(ignore: true)
   _$$AadvantageTicketsImplCopyWith<_$AadvantageTicketsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+CreatorInfo _$CreatorInfoFromJson(Map<String, dynamic> json) {
+  return _CreatorInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CreatorInfo {
+  @JsonKey(name: "id")
+  int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: "name")
+  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: "userNumber")
+  String? get userNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: "mobileNumber")
+  String? get mobileNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: "countryCode")
+  String? get countryCode => throw _privateConstructorUsedError;
+  @JsonKey(name: "image")
+  String? get image => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CreatorInfoCopyWith<CreatorInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CreatorInfoCopyWith<$Res> {
+  factory $CreatorInfoCopyWith(
+          CreatorInfo value, $Res Function(CreatorInfo) then) =
+      _$CreatorInfoCopyWithImpl<$Res, CreatorInfo>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") int? id,
+      @JsonKey(name: "name") String? name,
+      @JsonKey(name: "userNumber") String? userNumber,
+      @JsonKey(name: "mobileNumber") String? mobileNumber,
+      @JsonKey(name: "countryCode") String? countryCode,
+      @JsonKey(name: "image") String? image});
+}
+
+/// @nodoc
+class _$CreatorInfoCopyWithImpl<$Res, $Val extends CreatorInfo>
+    implements $CreatorInfoCopyWith<$Res> {
+  _$CreatorInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? userNumber = freezed,
+    Object? mobileNumber = freezed,
+    Object? countryCode = freezed,
+    Object? image = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userNumber: freezed == userNumber
+          ? _value.userNumber
+          : userNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      countryCode: freezed == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CreatorInfoImplCopyWith<$Res>
+    implements $CreatorInfoCopyWith<$Res> {
+  factory _$$CreatorInfoImplCopyWith(
+          _$CreatorInfoImpl value, $Res Function(_$CreatorInfoImpl) then) =
+      __$$CreatorInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") int? id,
+      @JsonKey(name: "name") String? name,
+      @JsonKey(name: "userNumber") String? userNumber,
+      @JsonKey(name: "mobileNumber") String? mobileNumber,
+      @JsonKey(name: "countryCode") String? countryCode,
+      @JsonKey(name: "image") String? image});
+}
+
+/// @nodoc
+class __$$CreatorInfoImplCopyWithImpl<$Res>
+    extends _$CreatorInfoCopyWithImpl<$Res, _$CreatorInfoImpl>
+    implements _$$CreatorInfoImplCopyWith<$Res> {
+  __$$CreatorInfoImplCopyWithImpl(
+      _$CreatorInfoImpl _value, $Res Function(_$CreatorInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? userNumber = freezed,
+    Object? mobileNumber = freezed,
+    Object? countryCode = freezed,
+    Object? image = freezed,
+  }) {
+    return _then(_$CreatorInfoImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userNumber: freezed == userNumber
+          ? _value.userNumber
+          : userNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mobileNumber: freezed == mobileNumber
+          ? _value.mobileNumber
+          : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      countryCode: freezed == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CreatorInfoImpl implements _CreatorInfo {
+  const _$CreatorInfoImpl(
+      {@JsonKey(name: "id") this.id,
+      @JsonKey(name: "name") this.name,
+      @JsonKey(name: "userNumber") this.userNumber,
+      @JsonKey(name: "mobileNumber") this.mobileNumber,
+      @JsonKey(name: "countryCode") this.countryCode,
+      @JsonKey(name: "image") this.image});
+
+  factory _$CreatorInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CreatorInfoImplFromJson(json);
+
+  @override
+  @JsonKey(name: "id")
+  final int? id;
+  @override
+  @JsonKey(name: "name")
+  final String? name;
+  @override
+  @JsonKey(name: "userNumber")
+  final String? userNumber;
+  @override
+  @JsonKey(name: "mobileNumber")
+  final String? mobileNumber;
+  @override
+  @JsonKey(name: "countryCode")
+  final String? countryCode;
+  @override
+  @JsonKey(name: "image")
+  final String? image;
+
+  @override
+  String toString() {
+    return 'CreatorInfo(id: $id, name: $name, userNumber: $userNumber, mobileNumber: $mobileNumber, countryCode: $countryCode, image: $image)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreatorInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.userNumber, userNumber) ||
+                other.userNumber == userNumber) &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber) &&
+            (identical(other.countryCode, countryCode) ||
+                other.countryCode == countryCode) &&
+            (identical(other.image, image) || other.image == image));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, name, userNumber, mobileNumber, countryCode, image);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreatorInfoImplCopyWith<_$CreatorInfoImpl> get copyWith =>
+      __$$CreatorInfoImplCopyWithImpl<_$CreatorInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CreatorInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CreatorInfo implements CreatorInfo {
+  const factory _CreatorInfo(
+      {@JsonKey(name: "id") final int? id,
+      @JsonKey(name: "name") final String? name,
+      @JsonKey(name: "userNumber") final String? userNumber,
+      @JsonKey(name: "mobileNumber") final String? mobileNumber,
+      @JsonKey(name: "countryCode") final String? countryCode,
+      @JsonKey(name: "image") final String? image}) = _$CreatorInfoImpl;
+
+  factory _CreatorInfo.fromJson(Map<String, dynamic> json) =
+      _$CreatorInfoImpl.fromJson;
+
+  @override
+  @JsonKey(name: "id")
+  int? get id;
+  @override
+  @JsonKey(name: "name")
+  String? get name;
+  @override
+  @JsonKey(name: "userNumber")
+  String? get userNumber;
+  @override
+  @JsonKey(name: "mobileNumber")
+  String? get mobileNumber;
+  @override
+  @JsonKey(name: "countryCode")
+  String? get countryCode;
+  @override
+  @JsonKey(name: "image")
+  String? get image;
+  @override
+  @JsonKey(ignore: true)
+  _$$CreatorInfoImplCopyWith<_$CreatorInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

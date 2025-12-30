@@ -84,6 +84,8 @@
     "testedcoolingefficiency": "اختبار كفاءة التبريد",
     "measuredperformanceverifiedoptimalcoolingoutput": "قياس الأداء والتحقق من إخراج التبريد الأمثل.",
     "customerDetails": "تفاصيل العميل",
+    "createdBy": "تم الإنشاء بواسطة",
+    "technicianAttachment": "مرفقات الفني",
     "maintenanceTicketDetails": "تفاصيل تذكرة الصيانة",
     "title": "العنوان",
     "status": "الحالة",
@@ -181,13 +183,17 @@
        "roleTechnician":"فني",
        "roleSubTechnician":"فني مساعد",
        "roleAdmin":"مدير",
-       "roleUnknown":"دور غير معروف ({roleId})",
-       "@roleUnknown": {
-         "placeholders": {
-           "roleId": {
-             "type": "int"
-           }
-         }
-       }
+      "roleUnknown":"دور غير معروف ({roleId})",
+      "@roleUnknown": {
+        "placeholders": {
+          "roleId": {
+            "type": "int"
+          }
+        }
+      },
+      "noAssignedTickets":"لا توجد تذاكر مخصصة",
+      "systemUnavailablePleaseTryAgainLater":"النظام غير متاح. يرجى المحاولة مرة أخرى لاحقاً.",
+      "sessionExpiredPleaseLoginAgain":"انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.",
+      "endpointNotFound":"نقطة النهاية غير موجودة."
 
 }

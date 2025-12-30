@@ -23,6 +23,7 @@ Map<String, dynamic> _$$TicketsDetailsModelImplToJson(
 _$TicketsDetailsImpl _$$TicketsDetailsImplFromJson(Map<String, dynamic> json) =>
     _$TicketsDetailsImpl(
       id: (json['id'] as num?)?.toInt(),
+      ticketCodeId: json['ticketCodeId'] as String?,
       title: json['title'] as String?,
       time: json['time'] as String?,
       titleAr: json['titleAr'] as String?,
@@ -46,6 +47,9 @@ _$TicketsDetailsImpl _$$TicketsDetailsImplFromJson(Map<String, dynamic> json) =>
       ticketAttatchments: (json['ticketAttatchments'] as List<dynamic>?)
           ?.map((e) => TicketAttatchment.fromJson(e as Map<String, dynamic>))
           .toList(),
+      technicianAttachments: (json['technicianAttachments'] as List<dynamic>?)
+          ?.map((e) => TicketAttatchment.fromJson(e as Map<String, dynamic>))
+          .toList(),
       ticketTools: (json['ticketTools'] as List<dynamic>?)
           ?.map((e) => TicketTool.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -64,12 +68,17 @@ _$TicketsDetailsImpl _$$TicketsDetailsImplFromJson(Map<String, dynamic> json) =>
       advantageTickets: (json['advantageTickets'] as List<dynamic>?)
           ?.map((e) => AdvantageTickets.fromJson(e as Map<String, dynamic>))
           .toList(),
+      createdBy: (json['createdBy'] as num?)?.toInt(),
+      creator: json['creator'] == null
+          ? null
+          : CreatorInfo.fromJson(json['creator'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$TicketsDetailsImplToJson(
         _$TicketsDetailsImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'ticketCodeId': instance.ticketCodeId,
       'title': instance.title,
       'time': instance.time,
       'titleAr': instance.titleAr,
@@ -90,12 +99,15 @@ Map<String, dynamic> _$$TicketsDetailsImplToJson(
       'mobile': instance.mobile,
       'esitmatedTime': instance.esitmatedTime,
       'ticketAttatchments': instance.ticketAttatchments,
+      'technicianAttachments': instance.technicianAttachments,
       'ticketTools': instance.ticketTools,
       'ticketImages': instance.ticketImages,
       'ticketMaterials': instance.ticketMaterials,
       'maintenanceTickets': instance.maintenanceTickets,
       'servcieTickets': instance.serviceTickets,
       'advantageTickets': instance.advantageTickets,
+      'createdBy': instance.createdBy,
+      'creator': instance.creator,
     };
 
 _$TicketAttatchmentImpl _$$TicketAttatchmentImplFromJson(
@@ -223,4 +235,24 @@ Map<String, dynamic> _$$AadvantageTicketsImplToJson(
       'name': instance.name,
       'nameAr': instance.nameAr,
       'price': instance.price,
+    };
+
+_$CreatorInfoImpl _$$CreatorInfoImplFromJson(Map<String, dynamic> json) =>
+    _$CreatorInfoImpl(
+      id: (json['id'] as num?)?.toInt(),
+      name: json['name'] as String?,
+      userNumber: json['userNumber'] as String?,
+      mobileNumber: json['mobileNumber'] as String?,
+      countryCode: json['countryCode'] as String?,
+      image: json['image'] as String?,
+    );
+
+Map<String, dynamic> _$$CreatorInfoImplToJson(_$CreatorInfoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'userNumber': instance.userNumber,
+      'mobileNumber': instance.mobileNumber,
+      'countryCode': instance.countryCode,
+      'image': instance.image,
     };

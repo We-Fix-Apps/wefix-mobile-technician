@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
   final AuthUsecase authUsecase;
 
   bool isRegister = false;
-  
+
   // Team selection: B2B Team (default) or WeFix Team
   String selectedTeam = 'B2B Team'; // Default to B2B Team
 
@@ -652,6 +652,7 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
             // User has authorized role - proceed with login
             sl<Box>(instanceName: BoxKeys.appBox).put(BoxKeys.enableAuth, true);
             sl<Box>(instanceName: BoxKeys.appBox).put(BoxKeys.usertoken, r.data?.token);
+            sl<Box>(instanceName: BoxKeys.appBox).put(BoxKeys.userTeam, selectedTeam); // Store team selection
             sl<Box<User>>().put(BoxKeys.userData, r.data!.user!);
             sendOTPState.value = SendState.success;
             return GlobalContext.context.push(RouterKey.layout);

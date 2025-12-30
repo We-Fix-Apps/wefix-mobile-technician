@@ -21,6 +21,7 @@ class WidgetCachNetworkImage extends StatelessWidget {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius ?? 0)),
       child: CacheNetworkImagePlus(
         imageUrl: image,
+       
         imageBuilder:
             (context, imageProvider) => Container(
               decoration: BoxDecoration(

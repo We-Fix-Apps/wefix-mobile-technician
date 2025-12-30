@@ -23,8 +23,13 @@ class ToolsReoistoryImpl implements ToolsReoistory {
   @override
   Future<Either<Failure, Result<List<TicketTool>>>> ticketTools() async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for ticket tools endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
+      // Backend-tmms: Tools are stored in ticket.tools array
+      // Get ticket first to retrieve tools, or get from company-data if available
+      // For now, we'll need to get tools from the ticket itself
+      // TODO: Implement tools endpoint in backend-tmms or get from ticket
       final tickettoolsResponse = await client.getRequest(endpoint: AppLinks.ticketsToolsList, authorization: 'Bearer $token');
       ToolsModel tickettools = ToolsModel.fromJson(tickettoolsResponse.response.data);
       return Right(Result.success(tickettools.tools));
@@ -38,9 +43,12 @@ class ToolsReoistoryImpl implements ToolsReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> addTools(CreateToolsParams createToolsParams) async {
     try {
-      final ApiClient client = ApiClient(DioProvider().dio);
+      // Use SERVER_TMMS for add tools endpoint (backend-tmms)
+      final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.serverTMMS);
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       final ticketAddToolsResponse = await client.postRequest(
+        // Backend-tmms route: PUT /api/v1/tickets/:id (update tools array)
+        // TODO: Update to use PUT tickets/:id with tools array
         endpoint: AppLinks.ticketsAddTools,
         body: createToolsParams.toJson(),
         authorization: 'Bearer $token',

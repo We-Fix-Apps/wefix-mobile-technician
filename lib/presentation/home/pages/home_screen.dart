@@ -24,7 +24,13 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [const ContainerWelcomeUser(), 10.gap, const ContainerHomeCard(), 15.gap, const ContainerOrdersRequiest()],
+                children: [
+                  const ContainerWelcomeUser(), 
+                  10.gap, 
+                  const ContainerHomeCard(), 
+                  15.gap, 
+                  const ContainerOrdersRequiest()
+                ],
               ),
             ),
           );

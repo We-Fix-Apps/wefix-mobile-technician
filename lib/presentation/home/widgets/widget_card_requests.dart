@@ -47,7 +47,26 @@ class WidgetCardRequests extends StatelessWidget {
                       decoration: BoxDecoration(color: _statusColor(tickets?.status?.toLowerCase() ?? 'pending'), borderRadius: BorderRadius.circular(100)),
                     ),
                     5.gap,
-                    Expanded(child: Text(tickets?.customer ?? '', style: AppTextStyle.style12B)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tickets?.ticketTitle ?? tickets?.customer ?? 'N/A',
+                            style: AppTextStyle.style12B,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (tickets?.customer != null && tickets?.customer != 'N/A' && tickets?.ticketTitle != null)
+                            Text(
+                              tickets?.customer ?? '',
+                              style: AppTextStyle.style10.copyWith(color: AppColor.grey),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
         subtitle:

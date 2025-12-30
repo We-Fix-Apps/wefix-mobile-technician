@@ -86,6 +86,8 @@
     "testedcoolingefficiency": "Tested cooling efficiency",
     "measuredperformanceverifiedoptimalcoolingoutput": "Measured performance, verified optimal cooling output.",
     "customerDetails": "Customer Details",
+    "createdBy": "Created By",
+    "technicianAttachment": "Technician Attachment",
     "maintenanceTicketDetails": "Maintenance Ticket Details",
     "title": "Title",
     "status": "Status",
@@ -189,6 +191,10 @@
             "type": "int"
           }
         }
-      }
+      },
+      "noAssignedTickets":"No assigned tickets",
+      "systemUnavailablePleaseTryAgainLater":"System unavailable. Please try again later.",
+      "sessionExpiredPleaseLoginAgain":"Session expired. Please login again.",
+      "endpointNotFound":"Endpoint not found."
 
 }

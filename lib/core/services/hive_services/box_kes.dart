@@ -10,4 +10,6 @@ class BoxKeys {
   static String fcmtoken = 'FCM_TOKEN';
   // User Box
   static String userData = 'USER_DATA';
+  // User Team (B2B Team or WeFix Team)
+  static String userTeam = 'USER_TEAM';
 }

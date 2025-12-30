@@ -24,15 +24,24 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   ValueNotifier<HomeStatus> homeStatue = ValueNotifier(HomeStatus.init);
   List<Map<String, dynamic>> filterTypes = [];
   String? totalTickets = '0';
-  String? memberViews = '0';
+  HomeModel? currentHomeData;
 
   HomeController({required this.homeUsecase});
 
   // Function to check User Role Access
   // Only allows TECHNICIAN (21) and SUB TECHNICIAN (22) roles
+  // Only allows B2B Team users
   Future<void> checkAccess() async {
     try {
       homeStatue.value = HomeStatus.loading;
+      
+      // Check if user is B2B Team
+      final userTeam = sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.userTeam);
+      if (userTeam != 'B2B Team') {
+        homeStatue.value = HomeStatus.failuer;
+        _denyAccessAndLogout(AppText(GlobalContext.context).accessDeniedTechniciansOnly);
+        return;
+      }
       
       // Get user from local storage
       final user = sl<Box<User>>().get(BoxKeys.userData);
@@ -119,33 +128,76 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   // Function to get the home data
+  // Only available for B2B Team users (WeFix Team users are different consumers)
   Future<void> getHomeData() async {
     try {
+      // Check if user is B2B Team - only B2B users can access home data
+      final userTeam = sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.userTeam);
+      if (userTeam != 'B2B Team') {
+        homeStatue.value = HomeStatus.failuer;
+        _denyAccessAndLogout(AppText(GlobalContext.context).accessDeniedTechniciansOnly);
+        return;
+      }
+      
       homeStatue.value = HomeStatus.loading;
       final result = await homeUsecase.getHomeData();
       result.fold(
         (l) {
           homeStatue.value = HomeStatus.failuer;
+          // Show appropriate error message based on failure type
+          String errorMessage = AppText(GlobalContext.context).systemErrorDuringAccessVerification;
+          // Check error message for status codes
+          final errorMsg = l.message.toLowerCase();
+          if (errorMsg.contains('500') || errorMsg.contains('internal server error') || errorMsg.contains('timeout')) {
+            errorMessage = AppText(GlobalContext.context).systemUnavailablePleaseTryAgainLater;
+          } else if (errorMsg.contains('401') || errorMsg.contains('unauthorized')) {
+            errorMessage = AppText(GlobalContext.context).sessionExpiredPleaseLoginAgain;
+          } else if (errorMsg.contains('404') || errorMsg.contains('not found')) {
+            errorMessage = AppText(GlobalContext.context).endpointNotFound;
+          }
           SmartDialog.show(
             builder:
                 (context) => WidgetDilog(
                   isError: true,
                   title: AppText(context).warning,
-                  message: 'Error in section Get Home Data',
+                  message: errorMessage,
                   cancelText: AppText(context).back,
                   onCancel: () => SmartDialog.dismiss(),
                 ),
           );
         },
         (r) {
-          setFilter(r.data!);
-          homeStatue.value = HomeStatus.success;
+          if (r.data != null) {
+            currentHomeData = r.data!;
+            setFilter(r.data!);
+            homeStatue.value = HomeStatus.success;
+          } else {
+            // Handle empty data case
+            homeStatue.value = HomeStatus.success;
+            currentHomeData = HomeModel(
+              tickets: [],
+              ticketsTomorrow: [],
+              emergency: [],
+              technician: null,
+            );
+            setFilter(currentHomeData!);
+          }
           notifyListeners();
         },
       );
     } catch (e) {
       homeStatue.value = HomeStatus.failuer;
       log('Server Error in section Get Home Data : $e');
+      SmartDialog.show(
+        builder:
+            (context) => WidgetDilog(
+              isError: true,
+              title: AppText(context).warning,
+              message: AppText(context).systemUnavailablePleaseTryAgainLater,
+              cancelText: AppText(context).back,
+              onCancel: () => SmartDialog.dismiss(),
+            ),
+      );
     }
   }
 
@@ -163,7 +215,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     filterTypes[2]['count'] = (home.emergency?.length ?? 0).toString();
     totalTickets =
         '${(home.tickets?.where((value) => value.status?.toLowerCase() == 'pending').toList().length ?? 0) + (home.ticketsTomorrow?.where((value) => value.status?.toLowerCase() == 'pending').toList().length ?? 0) + (home.emergency?.where((value) => value.status?.toLowerCase() == 'pending').toList().length ?? 0)}';
-    memberViews = home.rating.toString();
+    // Rating/reviews removed - no longer needed
     notifyListeners();
   }
 

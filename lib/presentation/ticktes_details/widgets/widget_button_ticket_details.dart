@@ -24,6 +24,7 @@ class WidgetButtonTicketDetails extends StatelessWidget {
               final isCompleted = ticketStatus == TicketDetailsStatus.completed.name;
               final isSuccess = value == TicketStatus.success;
               final isInProgress = ticketStatus == TicketDetailsStatus.inprogress.name;
+              final isPending = ticketStatus == TicketDetailsStatus.pending.name;
               final isRecording = controller.recording == true;
 
               if (isLoading) {
@@ -37,7 +38,26 @@ class WidgetButtonTicketDetails extends StatelessWidget {
                   return SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: Row(children: [Expanded(child: AppButton.text(text: AppText(context).viewReport, onPressed: () => controller.launchReport()))]),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColor.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              '${AppText(context).status}: ',
+                              style: AppTextStyle.style14B,
+                            ),
+                            Text(
+                              controller.ticketsDetails?.status ?? '',
+                              style: AppTextStyle.style14.copyWith(color: AppColor.primaryColor),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 } else {
@@ -93,21 +113,23 @@ class WidgetButtonTicketDetails extends StatelessWidget {
                                   ),
                                 ],
                               )
-                              : Row(
-                                children: [
-                                  ValueListenableBuilder(
-                                    valueListenable: controller.startTicketStatue,
-                                    builder:
-                                        (context, status, child) => Expanded(
-                                          child: AppButton.text(
-                                            text: AppText(context).start,
-                                            loading: status == StartTicketStatus.loading,
-                                            onPressed: () => controller.startRecording(controller.ticketsDetails?.id.toString() ?? '0'),
-                                          ),
+                              : isPending
+                                  ? Row(
+                                      children: [
+                                        ValueListenableBuilder(
+                                          valueListenable: controller.startTicketStatue,
+                                          builder:
+                                              (context, status, child) => Expanded(
+                                                child: AppButton.text(
+                                                  text: AppText(context).start,
+                                                  loading: status == StartTicketStatus.loading,
+                                                  onPressed: () => controller.startRecording(controller.ticketsDetails?.id.toString() ?? '0'),
+                                                ),
+                                              ),
                                         ),
-                                  ),
-                                ],
-                              ),
+                                      ],
+                                    )
+                                  : const SizedBox.shrink(),
                     ),
                   );
                 }

@@ -48,6 +48,7 @@ class AppText {
   String get advantageTickets => getTranslation('advantageTickets');
   String get female => getTranslation('female');
   String get serviceProviderAttachment => getTranslation('serviceProviderAttachment');
+  String get technicianAttachment => getTranslation('technicianAttachment');
   String get services => getTranslation('services');
   String get enterYourName => getTranslation('enterYourName');
   String get selectType => getTranslation('selectType');
@@ -162,6 +163,7 @@ class AppText {
   String get testedcoolingefficiency => getTranslation('testedcoolingefficiency');
   String get measuredperformanceverifiedoptimalcoolingoutput => getTranslation('measuredperformanceverifiedoptimalcoolingoutput');
   String get customerDetails => getTranslation('customerDetails');
+  String get createdBy => getTranslation('createdBy');
   String get maintenanceTicketDetails => getTranslation('maintenanceTicketDetails');
   String get title => getTranslation('title');
   String get status => getTranslation('status');
@@ -230,4 +232,8 @@ class AppText {
   String get roleSubTechnician => getTranslation('roleSubTechnician');
   String get roleAdmin => getTranslation('roleAdmin');
   String roleUnknown(int roleId) => getTranslation('roleUnknown').replaceAll('{roleId}', roleId.toString());
+  String get noAssignedTickets => getTranslation('noAssignedTickets');
+  String get systemUnavailablePleaseTryAgainLater => getTranslation('systemUnavailablePleaseTryAgainLater');
+  String get sessionExpiredPleaseLoginAgain => getTranslation('sessionExpiredPleaseLoginAgain');
+  String get endpointNotFound => getTranslation('endpointNotFound');
 }
