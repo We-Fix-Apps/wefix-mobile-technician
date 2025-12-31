@@ -5,7 +5,7 @@ class BoxKeys {
   // Auth
   static String enableAuth = 'ENABLE_AUTH';
   // Token Box
-  static String usertoken = 'USER_TOKEN';
+  static String usertoken = 'mobile-access-token-tmms';
   // FCM Token Box
   static String fcmtoken = 'FCM_TOKEN';
   // User Box

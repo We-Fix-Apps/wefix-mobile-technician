@@ -59,6 +59,7 @@ dependencies:
   video_player: ^2.10.0
   audioplayers: ^6.4.0
   awesome_notifications: ^0.10.1
+  device_info_plus: ^10.1.2
 
 dev_dependencies:
   flutter_test:
@@ -87,4 +88,5 @@ flutter:
   assets:
     - .env
     - assets/image/
+    - assets/languages.json
     - assets/icon/

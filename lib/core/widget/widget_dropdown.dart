@@ -33,10 +33,14 @@ class WidgetDropDown<T> extends StatelessWidget {
       value: value,
       style: AppTextStyle.style14.copyWith(color: AppColor.black),
       selectedItemBuilder: (BuildContext context) {
+        // selectedItemBuilder is called for each item in the list
+        // Flutter will display the widget at the index that matches the selected value
         return items.map<Widget>((T item) {
+          final label = itemLabel(item);
           return Text(
-            itemLabel(item),
+            label.isNotEmpty ? label : item.toString(),
             style: AppTextStyle.style14.copyWith(color: AppColor.black),
+            overflow: TextOverflow.ellipsis,
           );
         }).toList();
       },

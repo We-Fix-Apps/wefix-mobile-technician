@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +8,10 @@ import 'package:video_player/video_player.dart';
 
 import '../../../core/constant/app_image.dart';
 import '../../../core/context/global.dart';
-import '../../../core/providers/app_text.dart';
 import '../../../core/providers/domain/usecase/language_usecase.dart';
 import '../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../core/router/router_key.dart';
 import '../../../core/services/hive_services/box_kes.dart';
-import '../../../core/widget/widget_daialog.dart';
 import '../../../injection_container.dart';
 
 class SplashProvider extends ChangeNotifier {
@@ -52,19 +49,14 @@ class SplashProvider extends ChangeNotifier {
 
   Future<void> getLanguage() async {
     try {
+      // Load languages from local file (no API call)
       final resultTools = await languageUsecase.getLanguage();
       resultTools.fold(
         (failure) {
-          return SmartDialog.show(
-            builder:
-                (context) => WidgetDilog(
-                  isError: true,
-                  title: AppText(context).warning,
-                  message: failure.message,
-                  cancelText: AppText(context).back,
-                  onCancel: () => SmartDialog.dismiss(),
-                ),
-          );
+          // If loading from local file fails, continue without showing error
+          // The app will use fallback translations
+          log('Failed to load localizations: ${failure.message}');
+          init(GlobalContext.context);
         },
         (success) {
           GlobalContext.context.read<LanguageProvider>().addLang(success.data?.languages ?? []);
@@ -73,7 +65,9 @@ class SplashProvider extends ChangeNotifier {
         },
       );
     } catch (e) {
-      log('Server Error in section Get Tools : $e');
+      log('Error loading localizations: $e');
+      // Continue even if loading fails - fallback translations will be used
+      init(GlobalContext.context);
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
@@ -11,6 +12,7 @@ import '../../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../../core/services/api_services/api_client.dart';
 import '../../../../core/services/api_services/dio_helper.dart';
 import '../../../../core/services/api_services/result_model.dart';
+import '../../../../core/services/device_info_service.dart';
 import '../../../../core/services/hive_services/box_kes.dart';
 import '../model/contact_info_model.dart';
 import '../model/user_model.dart';
@@ -126,12 +128,18 @@ class LoginRepositoryImpl implements LoginRepository {
       // B2B Team uses: user/verify-otp (TMMS endpoint)
       // WeFix Team uses: LOGIN from .env (WeFix endpoint)
       final String endpoint = (team == 'B2B Team') ? 'user/verify-otp' : AppLinks.login;
+      
+      // Get device ID with metadata
+      final deviceMetadata = await DeviceInfoService.getDeviceMetadata();
+      final deviceId = jsonEncode(deviceMetadata); // Send as JSON string with all metadata
+      
       final sendOtpResponse = await client.postRequest(
         endpoint: endpoint,
         body: {
           "mobile": normalizedMobile,
           "otp": code,
           "fcmToken": fcm,
+          "deviceId": deviceId, // Send device ID with metadata (model, brand, etc.)
         },
       );
       
