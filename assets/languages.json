@@ -3116,7 +3116,7 @@
         },
         {
           "id": 1063,
-          "wordKey": "canceled",
+          "wordKey": "cancelled",
           "value": "تم الإلغاء",
           "lang": "ar"
         },
@@ -3562,6 +3562,12 @@
           "id": 1214,
           "wordKey": "signature",
           "value": "توقيع",
+          "lang": "ar"
+        },
+        {
+          "id": 2376,
+          "wordKey": "completionNote",
+          "value": "ملاحظة الإكمال",
           "lang": "ar"
         },
         {
@@ -5640,7 +5646,7 @@
         {
           "id": 535,
           "wordKey": "ordercanceledSuccessfully",
-          "value": "Order canceled Successfully",
+          "value": "Order cancelled Successfully",
           "lang": "en"
         },
         {
@@ -7283,7 +7289,7 @@
         },
         {
           "id": 1062,
-          "wordKey": "canceled",
+          "wordKey": "cancelled",
           "value": "Canceled",
           "lang": "en"
         },
@@ -7302,7 +7308,7 @@
         {
           "id": 1068,
           "wordKey": "thisrequestwascanceled",
-          "value": "This request was canceled.",
+          "value": "This request was cancelled.",
           "lang": "en"
         },
         {
@@ -7699,6 +7705,12 @@
           "id": 1215,
           "wordKey": "signature",
           "value": "Signature",
+          "lang": "en"
+        },
+        {
+          "id": 2377,
+          "wordKey": "completionNote",
+          "value": "Completion Note",
           "lang": "en"
         },
         {

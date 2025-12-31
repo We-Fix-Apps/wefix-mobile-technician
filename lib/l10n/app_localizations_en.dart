@@ -426,13 +426,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inProgress => 'In Progress';
 
   @override
-  String get canceled => 'Canceled';
+  String get cancelled => 'Canceled';
 
   @override
   String get completed => 'Completed';
 
   @override
-  String get thisrequestwascanceled => 'This request was canceled.';
+  String get thisrequestwascanceled => 'This request was cancelled.';
 
   @override
   String get requestiscurrentlyunderway => 'Request is currently underway.';

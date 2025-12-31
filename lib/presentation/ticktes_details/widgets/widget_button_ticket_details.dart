@@ -21,7 +21,7 @@ class WidgetButtonTicketDetails extends StatelessWidget {
               final rawStatus = controller.ticketsDetails?.status?.toLowerCase() ?? '';
               final ticketStatus = rawStatus.replaceAll(' ', '');
               final isLoading = value == TicketStatus.loading;
-              final isCanceled = ticketStatus == TicketDetailsStatus.canceled.name;
+              final isCanceled = ticketStatus == TicketDetailsStatus.cancelled.name;
               final isCompleted = ticketStatus == TicketDetailsStatus.completed.name || ticketStatus == 'ended';
               final isSuccess = value == TicketStatus.success;
               final isInProgress = ticketStatus == TicketDetailsStatus.inprogress.name || ticketStatus == 'inprogress';

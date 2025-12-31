@@ -426,7 +426,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inProgress => 'قيد التنفيذ';
 
   @override
-  String get canceled => 'تم الإلغاء';
+  String get cancelled => 'تم الإلغاء';
 
   @override
   String get completed => 'مكتمل';

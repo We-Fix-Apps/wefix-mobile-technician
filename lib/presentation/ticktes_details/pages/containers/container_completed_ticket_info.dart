@@ -5,6 +5,7 @@ import '../../../../core/extension/gap.dart';
 import '../../../../core/providers/app_text.dart';
 import '../../../../core/unit/app_color.dart';
 import '../../../../core/unit/app_text_style.dart';
+import '../../../../core/widget/widget_cache_network_image.dart';
 import '../../controller/ticktes_details_controller.dart';
 import '../../domain/model/tickets_details_model.dart';
 import '../../domain/ticket_enum.dart';
@@ -142,6 +143,75 @@ class ContainerCompletedTicketInfo extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) => WidgetAttachmants(
                       url: technicianAttachments[index].filePath ?? '',
+                    ),
+                  ),
+                20.gap,
+                
+                // Completion Note Section (serviceDescription) - Always show label
+                Row(
+                  children: [
+                    Icon(Icons.note, size: 18, color: AppColor.primaryColor),
+                    5.gap,
+                    Text('${AppText(context).completionNote}', style: AppTextStyle.style14B),
+                  ],
+                ),
+                Divider(color: AppColor.grey.withOpacity(.4), thickness: 1, height: 20),
+                10.gap,
+                if (controller.ticketsDetails?.serviceDescription == null || 
+                    controller.ticketsDetails!.serviceDescription!.isEmpty)
+                  Text(
+                    AppText(context).emptyAttachments,
+                    style: AppTextStyle.style12.copyWith(color: AppColor.grey),
+                  )
+                else
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColor.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColor.grey.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      controller.ticketsDetails!.serviceDescription!,
+                      style: AppTextStyle.style12.copyWith(height: 1.5, color: AppColor.black),
+                    ),
+                  ),
+                20.gap,
+                
+                // Signature Section (reportLink) - Always show label
+                Row(
+                  children: [
+                    Icon(Icons.draw, size: 18, color: AppColor.primaryColor),
+                    5.gap,
+                    Text('${AppText(context).signature}', style: AppTextStyle.style14B),
+                  ],
+                ),
+                Divider(color: AppColor.grey.withOpacity(.4), thickness: 1, height: 20),
+                10.gap,
+                if (controller.ticketsDetails?.reportLink == null || 
+                    controller.ticketsDetails!.reportLink!.isEmpty)
+                  Text(
+                    AppText(context).emptyAttachments,
+                    style: AppTextStyle.style12.copyWith(color: AppColor.grey),
+                  )
+                else
+                  InkWell(
+                    onTap: () => controller.launchAttachmants(controller.ticketsDetails!.reportLink!),
+                    child: Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColor.grey.withOpacity(0.3)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: WidgetCachNetworkImage(
+                          image: controller.ticketsDetails!.reportLink!,
+                          boxFit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
                 20.gap,

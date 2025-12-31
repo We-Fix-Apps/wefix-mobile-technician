@@ -19,6 +19,7 @@ import 'containers/container_maintenance_section.dart';
 import 'containers/container_service_provide_section.dart';
 import 'containers/container_tools_section.dart';
 import 'containers/container_completed_ticket_info.dart';
+import 'containers/container_cancelled_status.dart';
 import 'customer_services.dart';
 
 class TicktesDetailsScreen extends StatelessWidget {
@@ -81,6 +82,8 @@ class TicktesDetailsScreen extends StatelessWidget {
                     if (controller.ticketsDetails?.type == TicketDetailsType.preventive.name) ContainerCompletionChecklist(id: id),
                     // Attachment sections (shows both ticket and technician attachments for all tickets)
                     const ContainerCompletedTicketInfo(),
+                    // Cancelled status section (shown at the end if ticket is cancelled)
+                    const ContainerCancelledStatus(),
                   ],
                 ),
               ),

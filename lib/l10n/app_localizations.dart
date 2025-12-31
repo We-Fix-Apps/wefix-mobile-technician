@@ -929,11 +929,11 @@ abstract class AppLocalizations {
   /// **'In Progress'**
   String get inProgress;
 
-  /// No description provided for @canceled.
+  /// No description provided for @cancelled.
   ///
   /// In en, this message translates to:
   /// **'Canceled'**
-  String get canceled;
+  String get cancelled;
 
   /// No description provided for @completed.
   ///
@@ -944,7 +944,7 @@ abstract class AppLocalizations {
   /// No description provided for @thisrequestwascanceled.
   ///
   /// In en, this message translates to:
-  /// **'This request was canceled.'**
+  /// **'This request was cancelled.'**
   String get thisrequestwascanceled;
 
   /// No description provided for @requestiscurrentlyunderway.

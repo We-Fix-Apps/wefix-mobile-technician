@@ -100,7 +100,7 @@ class WidgetCardRequests extends StatelessWidget {
         return AppColor.primaryColor600;
       case 'inprogress':
         return AppColor.blue;
-      case 'canceled':
+      case 'cancelled':
         return AppColor.red;
       case 'completed':
         return AppColor.green;

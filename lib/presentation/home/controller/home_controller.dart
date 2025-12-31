@@ -136,7 +136,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
             contents: [
               _buildStatusRow(AppText(context).pending, AppColor.primaryColor600, AppText(context).awaitinginitiationrequest),
               _buildStatusRow(AppText(context).inProgress, AppColor.blue, AppText(context).requestiscurrentlyunderway),
-              _buildStatusRow(AppText(context).canceled, AppColor.red, AppText(context).thisrequestwascanceled),
+              _buildStatusRow(AppText(context).cancelled, AppColor.red, AppText(context).thisrequestwascanceled),
               _buildStatusRow(AppText(context).completed, AppColor.green, AppText(context).thisrequestwascompletedsuccessfully),
             ],
             cancelText: AppText(context).back,

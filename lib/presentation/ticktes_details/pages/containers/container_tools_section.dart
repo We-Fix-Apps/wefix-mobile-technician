@@ -7,7 +7,7 @@ import '../../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../../core/unit/app_color.dart';
 import '../../../../core/unit/app_text_style.dart';
 import '../../controller/ticktes_details_controller.dart';
-import '../../domain/ticket_enum.dart';
+// import '../../domain/ticket_enum.dart'; // Not needed after hiding add button
 
 class ContainerToolsSection extends StatelessWidget {
   final String id;
@@ -24,22 +24,24 @@ class ContainerToolsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('🪛 ${AppText(context).requiredTools}', style: AppTextStyle.style14B),
-            TicketDetailsStatus.completed.name == context.read<TicktesDetailsController>().ticketsDetails?.status?.toLowerCase()
-                ? const SizedBox.shrink()
-                : InkWell(
-                  onTap: () {
-                    context.read<TicktesDetailsController>().getTools(
-                      context,
-                      id,
-                      context.read<TicktesDetailsController>().selecteddTool.value.map((e) => e.id ?? 0).toList(),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: AppColor.primaryColor, width: 1)),
-                    child: Icon(Icons.add, size: 20, color: AppColor.primaryColor),
-                  ),
-                ),
+            // Hidden: Add button for tools
+            // TicketDetailsStatus.completed.name == context.read<TicktesDetailsController>().ticketsDetails?.status?.toLowerCase()
+            //     ? const SizedBox.shrink()
+            //     : InkWell(
+            //       onTap: () {
+            //         context.read<TicktesDetailsController>().getTools(
+            //           context,
+            //           id,
+            //           context.read<TicktesDetailsController>().selecteddTool.value.map((e) => e.id ?? 0).toList(),
+            //         );
+            //       },
+            //       child: Container(
+            //         padding: const EdgeInsets.all(5),
+            //         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: AppColor.primaryColor, width: 1)),
+            //         child: Icon(Icons.add, size: 20, color: AppColor.primaryColor),
+            //       ),
+            //     ),
+            const SizedBox.shrink(),
           ],
         ),
         Divider(color: AppColor.grey.withOpacity(.4), thickness: 1, height: 20),

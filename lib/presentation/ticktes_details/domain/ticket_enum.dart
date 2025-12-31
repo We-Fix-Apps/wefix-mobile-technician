@@ -20,6 +20,6 @@ enum UpdateMaintenancesStatus { init, loading, success, failure }
 
 enum TicketDetailsType { emergency, corrective, preventive }
 
-enum TicketDetailsStatus { pending, inprogress, completed, canceled }
+enum TicketDetailsStatus { pending, inprogress, completed, cancelled }
 
 enum MaterialStatus { pending, accepted, rejected }

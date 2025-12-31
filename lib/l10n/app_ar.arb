@@ -146,7 +146,7 @@
     "statusColorsMeaning":"معنى ألوان الحالة",
     "pending":"قيد الانتظار",
     "inProgress":"قيد التنفيذ",
-    "canceled":"تم الإلغاء",
+    "cancelled":"تم الإلغاء",
     "uploadMaintenance": "تحميل الصيانة",
     "image": "صورة",
     "selectImage": "اختر صورة",

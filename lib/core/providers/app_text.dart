@@ -72,7 +72,7 @@ class AppText {
   String get statusColorsMeaning => getTranslation('statusColorsMeaning');
   String get pending => getTranslation('pending');
   String get inProgress => getTranslation('inProgress');
-  String get canceled => getTranslation('canceled');
+  String get cancelled => getTranslation('cancelled');
   String get completed => getTranslation('completed');
   String get thisrequestwascanceled => getTranslation('thisrequestwascanceled');
   String get requestiscurrentlyunderway => getTranslation('requestiscurrentlyunderway');
