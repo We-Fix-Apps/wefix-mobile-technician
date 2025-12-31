@@ -20,12 +20,12 @@ class AppText {
           .toList();
       
       if (languageList.isEmpty) {
-        return '';
+        return _getFallbackTranslation(key);
       }
       
       final languages = languageList.first.languages;
       if (languages == null || languages.isEmpty) {
-        return '';
+        return _getFallbackTranslation(key);
       }
       
       final translation = languages.firstWhere(
@@ -33,11 +33,40 @@ class AppText {
         orElse: () => SubLanguage(wordKey: key, value: ''),
       );
       
+      // If translation is empty, use fallback
+      if (translation.value == null || translation.value!.isEmpty) {
+        return _getFallbackTranslation(key);
+      }
+      
       return translation.value ?? '';
     } catch (e) {
-      // Return empty string if translation not found
-      return '';
+      // Return fallback translation if error occurs
+      return _getFallbackTranslation(key);
     }
+  }
+
+  // Fallback translations for keys that might not be in the API yet
+  String _getFallbackTranslation(String key) {
+    final fallbackTranslations = {
+      'en': {
+        'fullNameArabic': 'Full Name (Arabic)',
+        'fullNameEnglish': 'Full Name (English)',
+        'gender': 'Gender',
+        'male': 'Male',
+        'female': 'Female',
+        'selectGender': 'Select Gender',
+      },
+      'ar': {
+        'fullNameArabic': 'الاسم الكامل (عربي)',
+        'fullNameEnglish': 'الاسم الكامل (إنجليزي)',
+        'gender': 'الجنس',
+        'male': 'ذكر',
+        'female': 'أنثى',
+        'selectGender': 'اختر الجنس',
+      },
+    };
+    
+    return fallbackTranslations[langCode]?[key] ?? '';
   }
 
   String get youMustBeSelectedImages => getTranslation('youMustBeSelectedImages');
@@ -236,4 +265,9 @@ class AppText {
   String get systemUnavailablePleaseTryAgainLater => getTranslation('systemUnavailablePleaseTryAgainLater');
   String get sessionExpiredPleaseLoginAgain => getTranslation('sessionExpiredPleaseLoginAgain');
   String get endpointNotFound => getTranslation('endpointNotFound');
+  String get fullNameArabic => getTranslation('fullNameArabic');
+  String get fullNameEnglish => getTranslation('fullNameEnglish');
+  String get gender => getTranslation('gender');
+  String get male => getTranslation('male');
+  String get selectGender => getTranslation('selectGender');
 }

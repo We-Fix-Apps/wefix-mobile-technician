@@ -270,6 +270,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerDetails => 'Customer Details';
 
   @override
+  String get createdBy => 'Created By';
+
+  @override
+  String get technicianAttachment => 'Technician Attachment';
+
+  @override
   String get maintenanceTicketDetails => 'Maintenance Ticket Details';
 
   @override
@@ -474,6 +480,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectType => 'Select Type';
 
   @override
+  String get b2bTeam => 'B2B Team';
+
+  @override
+  String get weFixTeam => 'WeFix Team';
+
+  @override
   String get userDataNotFoundAccessDenied => 'User data not found. Access denied.';
 
   @override
@@ -524,7 +536,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleSubTechnician => 'Sub Technician';
 
   @override
+  String get roleAdmin => 'Admin';
+
+  @override
   String roleUnknown(int roleId) {
     return 'Unknown Role ($roleId)';
   }
+
+  @override
+  String get noAssignedTickets => 'No assigned tickets';
+
+  @override
+  String get systemUnavailablePleaseTryAgainLater => 'System unavailable. Please try again later.';
+
+  @override
+  String get sessionExpiredPleaseLoginAgain => 'Session expired. Please login again.';
+
+  @override
+  String get endpointNotFound => 'Endpoint not found.';
+
+  @override
+  String get fullNameArabic => 'Full Name (Arabic)';
+
+  @override
+  String get fullNameEnglish => 'Full Name (English)';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get selectGender => 'Select Gender';
 }

@@ -617,6 +617,18 @@ abstract class AppLocalizations {
   /// **'Customer Details'**
   String get customerDetails;
 
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created By'**
+  String get createdBy;
+
+  /// No description provided for @technicianAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Attachment'**
+  String get technicianAttachment;
+
   /// No description provided for @maintenanceTicketDetails.
   ///
   /// In en, this message translates to:
@@ -1025,6 +1037,18 @@ abstract class AppLocalizations {
   /// **'Select Type'**
   String get selectType;
 
+  /// No description provided for @b2bTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'B2B Team'**
+  String get b2bTeam;
+
+  /// No description provided for @weFixTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'WeFix Team'**
+  String get weFixTeam;
+
   /// No description provided for @userDataNotFoundAccessDenied.
   ///
   /// In en, this message translates to:
@@ -1121,11 +1145,71 @@ abstract class AppLocalizations {
   /// **'Sub Technician'**
   String get roleSubTechnician;
 
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get roleAdmin;
+
   /// No description provided for @roleUnknown.
   ///
   /// In en, this message translates to:
   /// **'Unknown Role ({roleId})'**
   String roleUnknown(int roleId);
+
+  /// No description provided for @noAssignedTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'No assigned tickets'**
+  String get noAssignedTickets;
+
+  /// No description provided for @systemUnavailablePleaseTryAgainLater.
+  ///
+  /// In en, this message translates to:
+  /// **'System unavailable. Please try again later.'**
+  String get systemUnavailablePleaseTryAgainLater;
+
+  /// No description provided for @sessionExpiredPleaseLoginAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please login again.'**
+  String get sessionExpiredPleaseLoginAgain;
+
+  /// No description provided for @endpointNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint not found.'**
+  String get endpointNotFound;
+
+  /// No description provided for @fullNameArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name (Arabic)'**
+  String get fullNameArabic;
+
+  /// No description provided for @fullNameEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name (English)'**
+  String get fullNameEnglish;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @selectGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get selectGender;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

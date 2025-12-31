@@ -194,6 +194,11 @@
       "noAssignedTickets":"لا توجد تذاكر مخصصة",
       "systemUnavailablePleaseTryAgainLater":"النظام غير متاح. يرجى المحاولة مرة أخرى لاحقاً.",
       "sessionExpiredPleaseLoginAgain":"انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.",
-      "endpointNotFound":"نقطة النهاية غير موجودة."
+      "endpointNotFound":"نقطة النهاية غير موجودة.",
+      "fullNameArabic":"الاسم الكامل (عربي)",
+      "fullNameEnglish":"الاسم الكامل (إنجليزي)",
+      "gender":"الجنس",
+      "male":"ذكر",
+      "selectGender":"اختر الجنس"
 
 }

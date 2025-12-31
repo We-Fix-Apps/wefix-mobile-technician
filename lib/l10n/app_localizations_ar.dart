@@ -270,6 +270,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerDetails => 'تفاصيل العميل';
 
   @override
+  String get createdBy => 'تم الإنشاء بواسطة';
+
+  @override
+  String get technicianAttachment => 'مرفقات الفني';
+
+  @override
   String get maintenanceTicketDetails => 'تفاصيل تذكرة الصيانة';
 
   @override
@@ -474,6 +480,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectType => 'اختر النوع';
 
   @override
+  String get b2bTeam => 'فريق B2B';
+
+  @override
+  String get weFixTeam => 'فريق WeFix';
+
+  @override
   String get userDataNotFoundAccessDenied => 'لم يتم العثور على بيانات المستخدم. تم رفض الوصول.';
 
   @override
@@ -524,7 +536,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roleSubTechnician => 'فني مساعد';
 
   @override
+  String get roleAdmin => 'مدير';
+
+  @override
   String roleUnknown(int roleId) {
     return 'دور غير معروف ($roleId)';
   }
+
+  @override
+  String get noAssignedTickets => 'لا توجد تذاكر مخصصة';
+
+  @override
+  String get systemUnavailablePleaseTryAgainLater => 'النظام غير متاح. يرجى المحاولة مرة أخرى لاحقاً.';
+
+  @override
+  String get sessionExpiredPleaseLoginAgain => 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get endpointNotFound => 'نقطة النهاية غير موجودة.';
+
+  @override
+  String get fullNameArabic => 'الاسم الكامل (عربي)';
+
+  @override
+  String get fullNameEnglish => 'الاسم الكامل (إنجليزي)';
+
+  @override
+  String get gender => 'الجنس';
+
+  @override
+  String get male => 'ذكر';
+
+  @override
+  String get selectGender => 'اختر الجنس';
 }

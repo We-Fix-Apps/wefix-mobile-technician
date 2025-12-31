@@ -21,7 +21,9 @@ import 'presentation/chat/domain/usecase/chat_usecase.dart';
 import 'presentation/drawer/controller/drawer/drawer_controller.dart';
 import 'presentation/drawer/controller/edit_profile/edit_profile_controller.dart';
 import 'presentation/drawer/domain/repository/content_repository.dart';
+import 'presentation/drawer/domain/repository/profile_repository.dart';
 import 'presentation/drawer/domain/usecase/content_usecase.dart';
+import 'presentation/drawer/domain/usecase/profile_usecase.dart';
 import 'presentation/home/controller/home_controller.dart';
 import 'presentation/home/domain/repoistory/home_repoistory.dart';
 import 'presentation/home/domain/usecase/home_usecase.dart';
@@ -72,13 +74,14 @@ Future<void> init() async {
   sl.registerFactory<SupportProvider>(() => SupportProvider(supportUsecase: sl()));
   sl.registerFactory<DrawerControllers>(() => DrawerControllers(contentUsecase: sl()));
   sl.registerFactory<ChatController>(() => ChatController(ticketUsecase: sl(), authUsecase: sl()));
-  sl.registerFactory<EditProfileController>(() => EditProfileController());
+  sl.registerFactory<EditProfileController>(() => EditProfileController(profileUsecase: sl(), homeUsecase: sl()));
   sl.registerFactory<TicktesDetailsController>(() => TicktesDetailsController(ticketUsecase: sl(), authUsecase: sl()));
   sl.registerFactory<ToolsController>(() => ToolsController(toolsUsecase: sl()));
   // * ======================== UseCase ========================================
   sl.registerLazySingleton<AuthUsecase>(() => AuthUsecase(loginRepository: sl(), registerRepository: sl()));
   sl.registerLazySingleton<LayoutUsecase>(() => LayoutUsecase(layoutRepoistory: sl(), notificationRepository: sl()));
   sl.registerLazySingleton<ContentUsecase>(() => ContentUsecase(contentRepository: sl()));
+  sl.registerLazySingleton<ProfileUsecase>(() => ProfileUsecase(profileRepository: sl()));
   sl.registerLazySingleton<SupportUsecase>(() => SupportUsecase(supportRepository: sl()));
   sl.registerLazySingleton<ToolsUsecase>(() => ToolsUsecase(toolsRepoi: sl()));
   sl.registerLazySingleton<HomeUsecase>(() => HomeUsecase(homeRepoistory: sl()));
@@ -94,6 +97,7 @@ Future<void> init() async {
   sl.registerLazySingleton<LayoutRepoistory>(() => LayoutRepoistoryImpl());
   sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl());
   sl.registerLazySingleton<ContentRepository>(() => ContentRepositoryImpl());
+  sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
   sl.registerLazySingleton<SupportRepository>(() => SupportRepositoryImpl());
   sl.registerLazySingleton<ToolsRepoistory>(() => ToolsRepoistoryImpl());
   sl.registerLazySingleton<HomeRepoistory>(() => HomeRepoistoryImpl());

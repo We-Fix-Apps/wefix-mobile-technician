@@ -195,6 +195,11 @@
       "noAssignedTickets":"No assigned tickets",
       "systemUnavailablePleaseTryAgainLater":"System unavailable. Please try again later.",
       "sessionExpiredPleaseLoginAgain":"Session expired. Please login again.",
-      "endpointNotFound":"Endpoint not found."
+      "endpointNotFound":"Endpoint not found.",
+      "fullNameArabic":"Full Name (Arabic)",
+      "fullNameEnglish":"Full Name (English)",
+      "gender":"Gender",
+      "male":"Male",
+      "selectGender":"Select Gender"
 
 }

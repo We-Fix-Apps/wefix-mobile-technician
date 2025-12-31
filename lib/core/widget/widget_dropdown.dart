@@ -31,8 +31,15 @@ class WidgetDropDown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
       value: value,
-
       style: AppTextStyle.style14.copyWith(color: AppColor.black),
+      selectedItemBuilder: (BuildContext context) {
+        return items.map<Widget>((T item) {
+          return Text(
+            itemLabel(item),
+            style: AppTextStyle.style14.copyWith(color: AppColor.black),
+          );
+        }).toList();
+      },
       hint: Text(hintText ?? '', style: styleHint ?? AppTextStyle.style14.copyWith(color: AppColor.grey)),
       icon: Row(
         children: [
@@ -59,7 +66,10 @@ class WidgetDropDown<T> extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(gapPadding: 0, borderSide: const BorderSide(color: AppColor.grey), borderRadius: BorderRadius.circular(7)),
       ),
-      items: items.map((item) => DropdownMenuItem<T>(value: item, child: Text(itemLabel(item), style: AppTextStyle.style14))).toList(),
+      items: items.map((item) => DropdownMenuItem<T>(
+        value: item,
+        child: Text(itemLabel(item), style: AppTextStyle.style14.copyWith(color: AppColor.black)),
+      )).toList(),
       onChanged: onChanged,
       validator: validator,
     );
