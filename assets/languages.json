@@ -2665,6 +2665,12 @@
           "lang": "ar"
         },
         {
+          "id": 2396,
+          "wordKey": "technicianActions",
+          "value": "إجراءات الفني",
+          "lang": "ar"
+        },
+        {
           "id": 853,
           "wordKey": "estimatedFixTime",
           "value": "الوقت المقدر للإصلاح",
@@ -2773,6 +2779,24 @@
           "lang": "ar"
         },
         {
+          "id": 2390,
+          "wordKey": "ticketTitle",
+          "value": "عنوان التذكرة",
+          "lang": "ar"
+        },
+        {
+          "id": 2391,
+          "wordKey": "problemDescription",
+          "value": "وصف المشكلة",
+          "lang": "ar"
+        },
+        {
+          "id": 2392,
+          "wordKey": "serviceDescription",
+          "value": "وصف الخدمة",
+          "lang": "ar"
+        },
+        {
           "id": 871,
           "wordKey": "completionChecklist",
           "value": "قائمة إتمام المهام",
@@ -2818,6 +2842,12 @@
           "id": 878,
           "wordKey": "customerDetails",
           "value": "تفاصيل العميل",
+          "lang": "ar"
+        },
+        {
+          "id": 2398,
+          "wordKey": "createdBy",
+          "value": "تم الإنشاء بواسطة",
           "lang": "ar"
         },
         {
@@ -6916,6 +6946,12 @@
           "lang": "en"
         },
         {
+          "id": 2397,
+          "wordKey": "technicianActions",
+          "value": "Technician Actions",
+          "lang": "en"
+        },
+        {
           "id": 981,
           "wordKey": "estimatedFixTime",
           "value": "Estimated Fix Time",
@@ -7024,6 +7060,24 @@
           "lang": "en"
         },
         {
+          "id": 2393,
+          "wordKey": "ticketTitle",
+          "value": "Ticket Title",
+          "lang": "en"
+        },
+        {
+          "id": 2394,
+          "wordKey": "problemDescription",
+          "value": "Problem Description",
+          "lang": "en"
+        },
+        {
+          "id": 2395,
+          "wordKey": "serviceDescription",
+          "value": "Service Description",
+          "lang": "en"
+        },
+        {
           "id": 999,
           "wordKey": "completionChecklist",
           "value": "Completion Checklist",
@@ -7069,6 +7123,12 @@
           "id": 1006,
           "wordKey": "customerDetails",
           "value": "Customer Details",
+          "lang": "en"
+        },
+        {
+          "id": 2399,
+          "wordKey": "createdBy",
+          "value": "Created By",
           "lang": "en"
         },
         {

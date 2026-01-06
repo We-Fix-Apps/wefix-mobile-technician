@@ -141,6 +141,7 @@ class AppText {
   String get reviews => getTranslation('reviews');
   String get pendingTicktes => getTranslation('pendingTicktes');
   String get serviceProviderActions => getTranslation('serviceProviderActions');
+  String get technicianActions => getTranslation('technicianActions');
   String get estimatedFixTime => getTranslation('estimatedFixTime');
   String get hours => getTranslation('hours');
   String get partsRequired => getTranslation('partsRequired');
@@ -161,6 +162,9 @@ class AppText {
   String get close => getTranslation('close');
   String get confirm => getTranslation('confirm');
   String get issueDescription => getTranslation('issueDescription');
+  String get ticketTitle => getTranslation('ticketTitle');
+  String get problemDescription => getTranslation('problemDescription');
+  String get serviceDescription => getTranslation('serviceDescription');
   String get completionChecklist => getTranslation('completionChecklist');
   String get diagnosedtheissue => getTranslation('diagnosedtheissue');
   String get detectedanalyzedandresolvedcoreproblem => getTranslation('detectedanalyzedandresolvedcoreproblem');

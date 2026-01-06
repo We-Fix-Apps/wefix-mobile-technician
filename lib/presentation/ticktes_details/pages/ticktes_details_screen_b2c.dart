@@ -11,7 +11,6 @@ import '../../../injection_container.dart';
 import '../controller/ticktes_details_controller.dart';
 import '../domain/ticket_enum.dart';
 import '../widgets/widget_button_ticket_details.dart';
-import 'advantage_tickets.dart';
 import 'containers/container_description_section.dart';
 import 'containers/container_attachments_section.dart';
 import 'containers/container_completion_checklist_section.dart';
@@ -76,7 +75,6 @@ class TicktesDetailsScreenB2C extends StatelessWidget {
                     const ContainerMaintenanceSection(),
                     const ContainerCustomerSection(),
                     if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) const CustomerServices(),
-                    if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) const AdvantageTickets(),
                     const ContainnerDescriptionSection(),
                     const ContainerServiceProvideSection(),
                     const ContainerAttachmentsSection(),

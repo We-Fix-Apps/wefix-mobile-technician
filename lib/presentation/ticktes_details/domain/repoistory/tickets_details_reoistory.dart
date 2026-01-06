@@ -48,6 +48,8 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
       
       // Handle both direct data and wrapped response formats
       final responseData = ticketDetailsResponse.response.data;
+      
+      // B2B API returns { objTickets: {...} }, B2C might return { data: {...} } or direct {...}
       final data = responseData['data'] ?? responseData;
       
       TicketsDetailsModel ticketDetails = TicketsDetailsModel.fromJson(data);

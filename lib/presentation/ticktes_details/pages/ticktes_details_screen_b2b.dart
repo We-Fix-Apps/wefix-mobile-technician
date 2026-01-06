@@ -11,13 +11,13 @@ import '../../../injection_container.dart';
 import '../controller/ticktes_details_controller.dart';
 import '../domain/ticket_enum.dart';
 import '../widgets/widget_button_ticket_details.dart';
-import 'containers/container_description_section.dart';
+import 'containers/container_description_section_b2b.dart';
 import 'containers/container_completion_checklist_section.dart';
 import 'containers/container_customer_section.dart';
 import 'containers/container_maintenance_section.dart';
-import 'containers/container_service_provide_section.dart';
+import 'containers/container_service_provide_section_b2b.dart';
 import 'containers/container_tools_section.dart';
-import 'containers/container_completed_ticket_info.dart';
+import 'containers/container_completed_ticket_info_b2b.dart';
 import 'containers/container_cancelled_status.dart';
 import 'customer_services.dart';
 
@@ -74,14 +74,14 @@ class TicktesDetailsScreenB2B extends StatelessWidget {
                     const ContainerMaintenanceSection(),
                     const ContainerCustomerSection(),
                     if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) const CustomerServices(),
-                    const ContainnerDescriptionSection(),
-                    const ContainerServiceProvideSection(),
+                    const ContainnerDescriptionSectionB2B(),
+                    const ContainerServiceProvideSectionB2B(),
                     ContainerToolsSection(id: id),
                     // Hidden: Required material section
                     // if (controller.ticketsDetails?.type != TicketDetailsType.preventive.name) ContainerMaterialSection(id: id),
                     if (controller.ticketsDetails?.type == TicketDetailsType.preventive.name) ContainerCompletionChecklist(id: id),
                     // Attachment sections (shows both ticket and technician attachments for all tickets)
-                    const ContainerCompletedTicketInfo(),
+                    const ContainerCompletedTicketInfoB2B(),
                     // Cancelled status section (shown at the end if ticket is cancelled)
                     const ContainerCancelledStatus(),
                   ],
