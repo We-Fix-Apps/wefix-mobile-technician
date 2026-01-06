@@ -111,43 +111,55 @@ class TicketsDetailsReoistoryImpl implements TicketsDetailsReoistory {
   @override
   Future<Either<Failure, Result<Unit>>> completeTicket(String ticketId, String note, String signature, String link) async {
     try {
+      final bool isB2B = await _isB2BTeam();
       // Use team-based server: SERVER_TMMS for B2B Team, SERVER for WeFix Team
-      // Backend-tmms route: PUT /api/v1/tickets/:id (update ticketStatusId to "Completed")
       final ApiClient client = ApiClient(DioProvider().dio, baseUrl: AppLinks.getServerForTeam());
       final token = await sl<Box>(instanceName: BoxKeys.appBox).get(BoxKeys.usertoken);
       
-      // First, get ticket statuses to find "Completed" status ID (B2B only)
-      final String statusesEndpoint = (await _isB2BTeam()) ? AppLinks.b2bTicketStatuses : '';
-      if (statusesEndpoint.isEmpty) {
-        return Left(ServerFailure(message: 'Ticket statuses endpoint not available for this team'));
+      if (isB2B) {
+        // B2B: Backend-tmms route: PUT /api/v1/tickets/:id (update ticketStatusId to "Completed")
+        // First, get ticket statuses to find "Completed" status ID
+        final String statusesEndpoint = AppLinks.b2bTicketStatuses;
+        final statusesResponse = await client.getRequest(endpoint: statusesEndpoint, authorization: 'Bearer $token');
+        final statuses = statusesResponse.response.data['data'] ?? statusesResponse.response.data;
+        final completedStatus = (statuses as List).firstWhere(
+          (status) => (status['name'] as String?)?.toLowerCase() == 'completed',
+          orElse: () => null,
+        );
+        
+        if (completedStatus == null) {
+          return Left(ServerFailure(message: 'Completed status not found'));
+        }
+        
+        final completedStatusId = completedStatus['id'] as int;
+        
+        // Update ticket with completed status, note, and signature
+        final String updateEndpoint = AppLinks.b2bTicketUpdateUrl(ticketId);
+        await client.putRequest(
+          endpoint: updateEndpoint,
+          body: {
+            'ticketStatusId': completedStatusId,
+            'serviceDescription': note, // Store note in serviceDescription
+            'signatureUrl': signature, // Pass signature URL to link it to ticket
+          },
+          authorization: 'Bearer $token',
+        );
+      } else {
+        // B2C: Backend-tjms route: POST /ServiceProvider/CompleteTickets
+        // Body: { Id, SpNote, Signature, VideoLink }
+        final String completeEndpoint = AppLinks.completeTickets;
+        await client.postRequest(
+          endpoint: completeEndpoint,
+          body: {
+            'Id': int.tryParse(ticketId) ?? ticketId, // Ticket ID as integer
+            'SpNote': note, // Service provider note
+            'Signature': signature, // Signature (base64 or URL)
+            'VideoLink': link, // Video link if available
+          },
+          authorization: 'Bearer $token',
+        );
       }
-      final statusesResponse = await client.getRequest(endpoint: statusesEndpoint, authorization: 'Bearer $token');
-      final statuses = statusesResponse.response.data['data'] ?? statusesResponse.response.data;
-      final completedStatus = (statuses as List).firstWhere(
-        (status) => (status['name'] as String?)?.toLowerCase() == 'completed',
-        orElse: () => null,
-      );
       
-      if (completedStatus == null) {
-        return Left(ServerFailure(message: 'Completed status not found'));
-      }
-      
-      final completedStatusId = completedStatus['id'] as int;
-      
-      // Update ticket with completed status, note, and signature
-      // Use B2B route for B2B Team, B2C route for WeFix Team
-      final String updateEndpoint = (await _isB2BTeam()) 
-          ? AppLinks.b2bTicketUpdateUrl(ticketId) 
-          : '${AppLinks.completeTickets}$ticketId';
-      await client.putRequest(
-        endpoint: updateEndpoint,
-        body: {
-          'ticketStatusId': completedStatusId,
-          'serviceDescription': note, // Store note in serviceDescription
-          'signatureUrl': signature, // Pass signature URL to link it to ticket
-        },
-        authorization: 'Bearer $token',
-      );
       return Right(Result.success(unit));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
