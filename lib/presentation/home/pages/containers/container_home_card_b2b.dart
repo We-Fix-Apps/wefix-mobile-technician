@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constant/app_image.dart';
 import '../../../../core/constant/app_links.dart';
-import '../../../../core/extension/gap.dart';
 import '../../../../core/providers/app_text.dart';
 import '../../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../../core/services/hive_services/box_kes.dart';
@@ -100,8 +99,10 @@ class ContainerHomeCardB2B extends StatelessWidget {
                   Positioned(
                     left: isRTL ? null : 40,
                     right: isRTL ? 40 : null,
+                    top: 0,
+                    bottom: 0,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       child: Center(
                         child: Consumer<HomeController>(
                           builder: (context, controller, child) {
@@ -157,6 +158,7 @@ class ContainerHomeCardB2B extends StatelessWidget {
                             final companyName = lang == 'ar' ? (company?.nameArabic ?? company?.name ?? '') : (company?.nameEnglish ?? company?.name ?? '');
 
                             return Column(
+                              mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -172,17 +174,43 @@ class ContainerHomeCardB2B extends StatelessWidget {
                                             : WidgetCachNetworkImage(radius: 1000, boxFit: BoxFit.cover, image: imageUrl),
                                   ),
                                 ),
-                                8.gap,
-                                Text(technicianName, style: AppTextStyle.style18B, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
-                                if (technicianName.isEmpty) Text(AppText(context).loading, style: AppTextStyle.style14.copyWith(color: AppColor.grey), textAlign: TextAlign.center),
+                                const SizedBox(height: 8),
+                                // Technician name with proper constraints
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    child: Text(
+                                      technicianName,
+                                      style: AppTextStyle.style18B,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                                if (technicianName.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    child: Text(
+                                      AppText(context).loading,
+                                      style: AppTextStyle.style14.copyWith(color: AppColor.grey),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 if (companyName.isNotEmpty) ...[
-                                  5.gap,
-                                  Text(
-                                    companyName,
-                                    style: AppTextStyle.style14.copyWith(color: AppColor.grey),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  const SizedBox(height: 6),
+                                  // Company name with proper constraints
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                      child: Text(
+                                        companyName,
+                                        style: AppTextStyle.style14.copyWith(color: AppColor.grey),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ],
