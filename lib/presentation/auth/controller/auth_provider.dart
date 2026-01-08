@@ -266,9 +266,17 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
                       final localized = AppText(context).unauthorized;
                       errorMessage = localized.isNotEmpty ? localized : errorMessage;
                     } else if (errorMessage.toLowerCase().contains('forbidden') ||
-                               errorMessage.toLowerCase().contains('403')) {
-                      final localized = AppText(context).forbidden;
-                      errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                               errorMessage.toLowerCase().contains('403') ||
+                               errorMessage.toLowerCase().contains('access denied')) {
+                      // Check if it's the technician access denied message
+                      if (errorMessage.toLowerCase().contains('technician') || 
+                          errorMessage.toLowerCase().contains('only available')) {
+                        final localized = AppText(context).accessDeniedTechniciansOnly;
+                        errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                      } else {
+                        final localized = AppText(context).forbidden;
+                        errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                      }
                     } else if (errorMessage.toLowerCase().contains('not found') ||
                                errorMessage.toLowerCase().contains('404')) {
                       final localized = AppText(context).notFound;
@@ -661,70 +669,8 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
               );
             }
             
-            // Check user role before allowing login - only for B2B Team
-            // For B2C (WeFix Team), the backend-tjms endpoint already validates role (RoleId == 2)
-            // So we skip role check for B2C and only check for B2B Team
-            final bool isB2BTeam = teamToUse == 'B2B Team';
-            
-            if (isB2BTeam) {
-              // Only check role for B2B Team (backend-tmms provides userRoleId)
-              final userRoleId = r.data?.user?.userRoleId;
-              
-              // Handle null role ID
-              if (userRoleId == null) {
-                sendOTPState.value = SendState.failure;
-                return SmartDialog.show(
-                  builder:
-                      (context) => WidgetDilog(
-                        isError: true,
-                        title: AppText(context).warning,
-                        message: AppText(context).userRoleNotFoundAccessDenied,
-                        cancelText: AppText(context).back,
-                        onCancel: () => SmartDialog.dismiss(),
-                      ),
-                );
-              }
-              
-              // Validate role ID is a valid positive integer
-              if (userRoleId <= 0) {
-                sendOTPState.value = SendState.failure;
-                return SmartDialog.show(
-                  builder:
-                      (context) => WidgetDilog(
-                        isError: true,
-                        title: AppText(context).warning,
-                        message: AppText(context).invalidUserRoleIdAccessDenied,
-                        cancelText: AppText(context).back,
-                        onCancel: () => SmartDialog.dismiss(),
-                      ),
-                );
-              }
-              
-              // Check if user has allowed role (21 = TECHNICIAN, 22 = SUB TECHNICIAN)
-              if (userRoleId != 21 && userRoleId != 22) {
-                sendOTPState.value = SendState.failure;
-                return SmartDialog.show(
-                  builder:
-                      (context) {
-                        String roleName = _getRoleName(context, userRoleId);
-                        String message = AppText(context).accessDeniedTechniciansOnlyWithRole(roleName);
-                        // Fallback if translation is empty
-                        if (message.isEmpty) {
-                          message = 'Access denied. This app is only available for Technicians. Your role: $roleName';
-                        }
-                        log('Access denied for role: $userRoleId ($roleName)');
-                        return WidgetDilog(
-                          isError: true,
-                          title: AppText(context).warning,
-                          message: message,
-                          cancelText: AppText(context).back,
-                          onCancel: () => SmartDialog.dismiss(),
-                        );
-                      },
-                );
-              }
-            }
-            // For B2C (WeFix Team), skip role check - backend-tjms already validated role
+            // Role check is now done at OTP request stage in backend-tmms, not here
+            // If we reach here, the user is allowed to login
             
             // User has authorized role - proceed with login
             final box = sl<Box>(instanceName: BoxKeys.appBox);
