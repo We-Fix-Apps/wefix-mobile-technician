@@ -97,12 +97,12 @@ class ContainerHomeCardB2B extends StatelessWidget {
                   ),
                   // Use Directionality based on language for proper RTL/LTR support
                   Positioned(
-                    left: isRTL ? null : 40,
-                    right: isRTL ? 40 : null,
+                    left: isRTL ? null : 20,
+                    right: isRTL ? 140 : null, // Reserve space for orange area (~130px)
                     top: 0,
                     bottom: 0,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       child: Center(
                         child: Consumer<HomeController>(
                           builder: (context, controller, child) {
