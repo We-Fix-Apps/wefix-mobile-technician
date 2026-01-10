@@ -40,11 +40,13 @@ class _ContainerFormVerifyB2BState extends State<ContainerFormVerifyB2B> with Fo
     return Column(
       children: [
         Center(
-          child: Pinput(
-            autofocus: true,
-            showCursor: true,
-            length: 4,
-            validator: (value) => validateNull(context, value),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Pinput(
+              autofocus: true,
+              showCursor: true,
+              length: 4,
+              validator: (value) => validateOTP(context, value),
             hapticFeedbackType: HapticFeedbackType.mediumImpact,
             controller: context.read<AuthProvider>().otp,
             // Enable SMS autofill - pinput automatically handles SMS autofill on Android
@@ -55,6 +57,7 @@ class _ContainerFormVerifyB2BState extends State<ContainerFormVerifyB2B> with Fo
             keyboardType: TextInputType.number,
             // Enable SMS autofill hint
             autofillHints: const [AutofillHints.oneTimeCode],
+            ),
           ),
         ),
         30.gap,

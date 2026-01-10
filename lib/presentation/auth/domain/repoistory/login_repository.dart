@@ -82,7 +82,9 @@ class LoginRepositoryImpl implements LoginRepository {
           } else if (loginResponse.response.statusCode == 423) {
             errorMessage = lang == 'ar' ? 'الحساب مؤقتاً مقفل' : 'Account temporarily locked';
           } else if (loginResponse.response.statusCode == 429) {
-            errorMessage = lang == 'ar' ? 'يرجى الانتظار قبل طلب رمز جديد' : 'Please wait before requesting a new code';
+            // Use messageAr from backend if available, otherwise use localized fallback
+            errorMessage = loginResponse.response.data['messageAr']?.toString() ?? 
+                          (lang == 'ar' ? 'يرجى الانتظار قبل طلب رمز جديد' : 'Please wait before requesting a new code');
           } else if (loginResponse.response.statusCode == 400) {
             errorMessage = lang == 'ar' ? 'رقم الهاتف غير صحيح' : 'Invalid phone number format';
           }
@@ -96,11 +98,11 @@ class LoginRepositoryImpl implements LoginRepository {
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
         String lang = GlobalContext.context.read<LanguageProvider>().lang ?? 'en';
-        return Left(ServerFailure(
-          message: lang == 'ar' 
-            ? 'خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى' 
-            : 'Network or service error. Please try again'
-        ));
+          return Left(ServerFailure(
+            message: lang == 'ar' 
+              ? 'الخدمة غير متوفرة حاليا'
+              : 'Service is currently unavailable'
+          ));
       }
       return Left(ServerFailure.fromDioError(e));
     } catch (e) {
@@ -304,11 +306,11 @@ class LoginRepositoryImpl implements LoginRepository {
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
         String lang = GlobalContext.context.read<LanguageProvider>().lang ?? 'en';
-        return Left(ServerFailure(
-          message: lang == 'ar' 
-            ? 'خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى' 
-            : 'Network or service error. Please try again'
-        ));
+          return Left(ServerFailure(
+            message: lang == 'ar' 
+              ? 'الخدمة غير متوفرة حاليا'
+              : 'Service is currently unavailable'
+          ));
       }
       return Left(ServerFailure.fromDioError(e));
     } catch (e) {

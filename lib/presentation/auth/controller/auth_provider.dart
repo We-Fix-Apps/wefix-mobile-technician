@@ -250,9 +250,19 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
                       final localized = AppText(context).accountTemporarilyLocked;
                       errorMessage = localized.isNotEmpty ? localized : errorMessage;
                     } else if (errorMessage.toLowerCase().contains('wait') || 
-                               errorMessage.toLowerCase().contains('rate')) {
-                      final localized = AppText(context).pleaseWaitBeforeRequestingOTP;
-                      errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                               errorMessage.toLowerCase().contains('rate') ||
+                               errorMessage.toLowerCase().contains('seconds before')) {
+                      // Extract seconds from message if available
+                      final secondsMatch = RegExp(r'(\d+)\s*seconds?').firstMatch(errorMessage);
+                      final seconds = secondsMatch?.group(1) ?? '60';
+                      
+                      // Use localized message with seconds
+                      final lang = Localizations.localeOf(context).languageCode;
+                      if (lang == 'ar') {
+                        errorMessage = 'يرجى الانتظار $seconds ثانية قبل طلب رمز جديد';
+                      } else {
+                        errorMessage = 'Please wait $seconds seconds before requesting a new OTP';
+                      }
                     } else if (errorMessage.toLowerCase().contains('internal server error') ||
                                errorMessage.toLowerCase().contains('500')) {
                       final localized = AppText(context).internalServerError;
@@ -346,7 +356,7 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
               (context) => WidgetDilog(
                 isError: true,
                 title: AppText(context).warning,
-                message: 'Network or service error. Please try again',
+                message: AppText(context).serviceUnavailable,
                 cancelText: AppText(context).back,
                 onCancel: () => SmartDialog.dismiss(),
               ),
@@ -625,7 +635,22 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
           teamToUse = 'B2B Team';
         }
         
-        final sendOtpResponse = await authUsecase.sendOtp(mobile: normalizedPhone, otp: otp.text, fcm: fcmToken ?? '', team: teamToUse);
+        // Validate OTP is not empty before sending
+        final trimmedOTP = otp.text.trim();
+        if (trimmedOTP.isEmpty || trimmedOTP.length < 4) {
+          sendOTPState.value = SendState.failure;
+          return SmartDialog.show(
+            builder: (context) => WidgetDilog(
+              isError: true,
+              title: AppText(context).warning,
+              message: AppText(context).otpRequired,
+              cancelText: AppText(context).back,
+              onCancel: () => SmartDialog.dismiss(),
+            ),
+          );
+        }
+        
+        final sendOtpResponse = await authUsecase.sendOtp(mobile: normalizedPhone, otp: trimmedOTP, fcm: fcmToken ?? '', team: teamToUse);
         sendOtpResponse.fold(
           (l) {
             sendOTPState.value = SendState.failure;
@@ -768,12 +793,24 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
         (l) {
           SmartDialog.dismiss();
           
-          // Check if it's a rate limiting error
+          // Check if it's a rate limiting error - use localized message
           String errorMessage = l.message;
           if (l.message.toLowerCase().contains('wait') || 
               l.message.toLowerCase().contains('rate') ||
-              l.message.toLowerCase().contains('60 seconds')) {
-            errorMessage = 'Please wait 60 seconds before requesting a new OTP';
+              l.message.toLowerCase().contains('60 seconds') ||
+              l.message.toLowerCase().contains('seconds before')) {
+            // Check if we have an Arabic message in the error response
+            // Extract seconds from message if available
+            final secondsMatch = RegExp(r'(\d+)\s*seconds?').firstMatch(l.message);
+            final seconds = secondsMatch?.group(1) ?? '60';
+            
+            // Use localized message with seconds
+            final lang = Localizations.localeOf(GlobalContext.context).languageCode;
+            if (lang == 'ar') {
+              errorMessage = 'يرجى الانتظار $seconds ثانية قبل طلب رمز جديد';
+            } else {
+              errorMessage = 'Please wait $seconds seconds before requesting a new OTP';
+            }
           }
           
           return SmartDialog.show(
@@ -808,7 +845,7 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
             (context) => WidgetDilog(
               isError: true,
               title: AppText(context).warning,
-              message: 'Network error. Please try again',
+              message: AppText(context).serviceUnavailable,
               cancelText: AppText(context).back,
               onCancel: () => SmartDialog.dismiss(),
             ),

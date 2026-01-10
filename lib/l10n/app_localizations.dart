@@ -1121,6 +1121,12 @@ abstract class AppLocalizations {
   /// **'Network error. Please check your connection and try again.'**
   String get networkErrorCheckConnection;
 
+  /// No description provided for @serviceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is currently unavailable'**
+  String get serviceUnavailable;
+
   /// No description provided for @roleSuperUser.
   ///
   /// In en, this message translates to:

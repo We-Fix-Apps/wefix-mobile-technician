@@ -117,6 +117,7 @@ class AppText {
   String get followAsOnSocialMedia => getTranslation('followAsOnSocialMedia');
   String get forgotpasswordResetithereeasily => getTranslation('forgotpasswordResetithereeasily');
   String get enterOTPtoverifyidentity => getTranslation('enterOTPtoverifyidentity');
+  String get otpRequired => getTranslation('otpRequired');
   String get sendtheverificationcodeagain => getTranslation('sendtheverificationcodeagain');
   String get backTo => getTranslation('backTo');
   String get back => getTranslation('back');
@@ -235,6 +236,7 @@ class AppText {
   String get systemErrorDuringAccessVerification => getTranslation('systemErrorDuringAccessVerification');
   String get backendServerError => getTranslation('backendServerError');
   String get networkErrorCheckConnection => getTranslation('networkErrorCheckConnection');
+  String get serviceUnavailable => getTranslation('serviceUnavailable');
   String get roleSuperUser => getTranslation('roleSuperUser');
   String get roleIndividual => getTranslation('roleIndividual');
   String get roleTeamLeader => getTranslation('roleTeamLeader');

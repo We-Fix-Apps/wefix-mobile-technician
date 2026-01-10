@@ -34,11 +34,13 @@ class _ContainerFormVerifyB2CState extends State<ContainerFormVerifyB2C> with Fo
     return Column(
       children: [
         Center(
-          child: Pinput(
-            autofocus: true,
-            showCursor: true,
-            length: 4,
-            validator: (value) => validateNull(context, value),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Pinput(
+              autofocus: true,
+              showCursor: true,
+              length: 4,
+              validator: (value) => validateOTP(context, value),
             hapticFeedbackType: HapticFeedbackType.mediumImpact,
             controller: context.read<AuthProvider>().otp,
             // Completely disable autofill and suggestions for B2C
@@ -47,6 +49,7 @@ class _ContainerFormVerifyB2CState extends State<ContainerFormVerifyB2C> with Fo
             keyboardType: TextInputType.number,
             // Disable SMS autofill for B2C - use empty list instead of null to completely disable
             autofillHints: const [],
+            ),
           ),
         ),
         30.gap,

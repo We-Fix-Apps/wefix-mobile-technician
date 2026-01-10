@@ -18,6 +18,13 @@ mixin FormValidationMixin {
     return null;
   }
 
+  String? validateOTP(BuildContext context, String? value) {
+    if (value == null || value.isEmpty || value.length < 4) {
+      return AppText(context, isFunction: true).otpRequired;
+    }
+    return null;
+  }
+
   String? validateMobile(BuildContext context, String? value) {
     if (value == null || value.isEmpty) {
       return AppText(context, isFunction: true).mobilenumbercannotbeempty;

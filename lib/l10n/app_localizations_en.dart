@@ -524,6 +524,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get networkErrorCheckConnection => 'Network error. Please check your connection and try again.';
 
   @override
+  String get serviceUnavailable => 'Service is currently unavailable';
+
+  @override
   String get roleSuperUser => 'Super User';
 
   @override
