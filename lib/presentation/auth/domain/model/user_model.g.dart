@@ -16,21 +16,8 @@ class UserAdapter extends TypeAdapter<User> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    
-    // Helper function to safely convert to int?
-    int? _toInt(dynamic value) {
-      if (value == null) return null;
-      if (value is int) return value;
-      if (value is String) {
-        final parsed = int.tryParse(value);
-        return parsed;
-      }
-      if (value is num) return value.toInt();
-      return null;
-    }
-    
     return User(
-      id: _toInt(fields[0]),
+      id: fields[0] as int?,
       userNumber: fields[1] as String?,
       fullName: fields[2] as String?,
       fullNameEnglish: fields[3] as String?,
@@ -38,8 +25,8 @@ class UserAdapter extends TypeAdapter<User> {
       mobileNumber: fields[5] as String?,
       countryCode: fields[6] as String?,
       username: fields[7] as String?,
-      userRoleId: _toInt(fields[8]),
-      companyId: _toInt(fields[9]),
+      userRoleId: fields[8] as int?,
+      companyId: fields[9] as int?,
       profileImage: fields[10] as String?,
       gender: fields[11] as String?,
       createdAt: fields[12] as DateTime?,
