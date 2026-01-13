@@ -291,11 +291,15 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
                                errorMessage.toLowerCase().contains('404')) {
                       final localized = AppText(context).notFound;
                       errorMessage = localized.isNotEmpty ? localized : errorMessage;
-                    } else if (errorMessage.toLowerCase().contains('connection error')) {
-                      final localized = AppText(context).connectionError;
-                      errorMessage = localized.isNotEmpty ? localized : errorMessage;
-                    } else if (errorMessage.toLowerCase().contains('connection timeout')) {
-                      final localized = AppText(context).connectionTimeout;
+                    } else if (errorMessage.toLowerCase().contains('connection error') ||
+                               errorMessage.toLowerCase().contains('connection timeout') ||
+                               errorMessage.toLowerCase().contains('receive timeout') ||
+                               errorMessage.toLowerCase().contains('send timeout') ||
+                               errorMessage.toLowerCase().contains('offline') ||
+                               (errorMessage.toLowerCase().contains('endpoint') && errorMessage.toLowerCase().contains('offline')) ||
+                               errorMessage.toLowerCase().contains('service unavailable')) {
+                      // Handle any connection/offline errors - service is unavailable
+                      final localized = AppText(context).serviceUnavailable;
                       errorMessage = localized.isNotEmpty ? localized : errorMessage;
                     } else if (errorMessage.toLowerCase().contains('unknown error')) {
                       final localized = AppText(context).unknownError;

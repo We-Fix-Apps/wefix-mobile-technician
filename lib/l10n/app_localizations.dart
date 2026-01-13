@@ -1124,7 +1124,7 @@ abstract class AppLocalizations {
   /// No description provided for @serviceUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Service is currently unavailable'**
+  /// **'Service Unavailable'**
   String get serviceUnavailable;
 
   /// No description provided for @roleSuperUser.

@@ -524,7 +524,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get networkErrorCheckConnection => 'خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى.';
 
   @override
-  String get serviceUnavailable => 'الخدمة غير متوفرة حاليا';
+  String get serviceUnavailable => 'الخدمة غير متاحة';
 
   @override
   String get roleSuperUser => 'مستخدم فائق';

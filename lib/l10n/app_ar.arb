@@ -179,7 +179,7 @@
        "systemErrorDuringAccessVerification":"خطأ في النظام أثناء التحقق من الوصول. يرجى المحاولة مرة أخرى لاحقًا.",
        "backendServerError":"خطأ في خادم الخلفية. يرجى المحاولة مرة أخرى لاحقًا.",
        "networkErrorCheckConnection":"خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
-       "serviceUnavailable":"الخدمة غير متوفرة حاليا",
+       "serviceUnavailable":"الخدمة غير متاحة",
        "roleSuperUser":"مستخدم فائق",
        "roleIndividual":"فردي",
        "roleTeamLeader":"قائد الفريق",

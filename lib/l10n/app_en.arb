@@ -180,7 +180,7 @@
       "systemErrorDuringAccessVerification":"System error during access verification. Please try again later.",
       "backendServerError":"Backend server error. Please try again later.",
       "networkErrorCheckConnection":"Network error. Please check your connection and try again.",
-      "serviceUnavailable":"Service is currently unavailable",
+      "serviceUnavailable":"Service Unavailable",
       "roleSuperUser":"Super User",
       "roleIndividual":"Individual",
       "roleTeamLeader":"Team Leader",

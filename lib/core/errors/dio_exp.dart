@@ -12,10 +12,12 @@ class ServerFailure extends Failure {
         return ServerFailure(message: 'Request Cancelled');
 
       case DioExceptionType.connectionTimeout:
-        return ServerFailure(message: 'Connection Timeout');
+        // Return service unavailable for any connection timeout
+        return ServerFailure(message: 'Service Unavailable');
 
       case DioExceptionType.receiveTimeout:
-        return ServerFailure(message: 'Receive Timeout');
+        // Return service unavailable for any receive timeout
+        return ServerFailure(message: 'Service Unavailable');
 
       case DioExceptionType.badResponse:
         // Extract message from response data
@@ -33,16 +35,35 @@ class ServerFailure extends Failure {
         } else if (responseData != null) {
           errorMessage = responseData.toString();
         }
+        
+        // Check for any offline/service unavailable errors (general, not specific to ngrok)
+        final dioMessage = dioException.message?.toLowerCase() ?? '';
+        if (dioMessage.contains('offline') ||
+            (dioMessage.contains('endpoint') && dioMessage.contains('offline'))) {
+          // Return service unavailable message (will be localized in UI)
+          return ServerFailure(message: 'Service Unavailable');
+        }
+        
+        // Check if it's an offline/service unavailable error in errorMessage
+        if (errorMessage != null && 
+            (errorMessage.toLowerCase().contains('offline') ||
+             (errorMessage.toLowerCase().contains('endpoint') && errorMessage.toLowerCase().contains('offline')))) {
+          // Return service unavailable message (will be localized in UI)
+          return ServerFailure(message: 'Service Unavailable');
+        }
+        
         return ServerFailure.fromResponse(
           dioException.response?.statusCode,
           message: errorMessage,
         );
 
       case DioExceptionType.sendTimeout:
-        return ServerFailure(message: 'Send Timeout');
+        // Return service unavailable for any send timeout
+        return ServerFailure(message: 'Service Unavailable');
 
       case DioExceptionType.connectionError:
-        return ServerFailure(message: 'Connection Error');
+        // Any connection error means service is unavailable
+        return ServerFailure(message: 'Service Unavailable');
 
       default:
         return ServerFailure(message: 'Unknown Error');

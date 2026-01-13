@@ -93,15 +93,16 @@ class LoginRepositoryImpl implements LoginRepository {
         return Left(ServerFailure(message: errorMessage));
       }
     } on DioException catch (e) {
-      // Handle network errors
+      // Handle network/connection errors - service is unavailable
       if (e.type == DioExceptionType.connectionTimeout || 
           e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError) {
         String lang = GlobalContext.context.read<LanguageProvider>().lang ?? 'en';
           return Left(ServerFailure(
             message: lang == 'ar' 
-              ? 'الخدمة غير متوفرة حاليا'
-              : 'Service is currently unavailable'
+              ? 'الخدمة غير متاحة'
+              : 'Service Unavailable'
           ));
       }
       return Left(ServerFailure.fromDioError(e));
@@ -301,15 +302,16 @@ class LoginRepositoryImpl implements LoginRepository {
         return Left(ServerFailure(message: errorMessage));
       }
     } on DioException catch (e) {
-      // Handle network errors
+      // Handle network/connection errors - service is unavailable
       if (e.type == DioExceptionType.connectionTimeout || 
           e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError) {
         String lang = GlobalContext.context.read<LanguageProvider>().lang ?? 'en';
           return Left(ServerFailure(
             message: lang == 'ar' 
-              ? 'الخدمة غير متوفرة حاليا'
-              : 'Service is currently unavailable'
+              ? 'الخدمة غير متاحة'
+              : 'Service Unavailable'
           ));
       }
       return Left(ServerFailure.fromDioError(e));

@@ -4153,6 +4153,12 @@
           "lang": "ar"
         },
         {
+          "id": 2390,
+          "wordKey": "serviceUnavailable",
+          "value": "الخدمة غير متاحة",
+          "lang": "ar"
+        },
+        {
           "id": 2389,
           "wordKey": "failedToSendOTP",
           "value": "فشل في إرسال رمز التحقق",
@@ -8395,6 +8401,12 @@
           "id": 2388,
           "wordKey": "unknownError",
           "value": "Unknown error",
+          "lang": "en"
+        },
+        {
+          "id": 2390,
+          "wordKey": "serviceUnavailable",
+          "value": "Service Unavailable",
           "lang": "en"
         },
         {
