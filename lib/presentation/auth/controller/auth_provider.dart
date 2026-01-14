@@ -278,15 +278,18 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
                     } else if (errorMessage.toLowerCase().contains('forbidden') ||
                                errorMessage.toLowerCase().contains('403') ||
                                errorMessage.toLowerCase().contains('access denied')) {
-                      // Check if it's the technician access denied message
-                      if (errorMessage.toLowerCase().contains('technician') || 
-                          errorMessage.toLowerCase().contains('only available')) {
-                        final localized = AppText(context).accessDeniedTechniciansOnly;
+                      // Check if it's the specific "service not available" message
+                      if (errorMessage.toLowerCase().contains('service is not available') ||
+                          errorMessage.toLowerCase().contains('الخدمة غير متاحة')) {
+                        // Use localized message from languages.json
+                        final localized = AppText(context).accessDeniedServiceNotAvailable;
                         errorMessage = localized.isNotEmpty ? localized : errorMessage;
-                      } else {
+                      } else if (errorMessage.isEmpty) {
+                        // Fallback if message is empty
                         final localized = AppText(context).forbidden;
-                        errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                        errorMessage = localized.isNotEmpty ? localized : 'Access denied';
                       }
+                      // Otherwise, display the backend message as-is
                     } else if (errorMessage.toLowerCase().contains('not found') ||
                                errorMessage.toLowerCase().contains('404')) {
                       final localized = AppText(context).notFound;
@@ -336,18 +339,8 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
             // Pass normalized mobile to OTP screen
             String normalizedMobile = mobile.text.replaceAll(' ', '').replaceAll('-', '').trim();
             
-            // Get OTP from response if available (for development/testing)
-            String? otpFromResponse;
-            final responseData = r.data;
-            if (responseData != null && responseData.containsKey('otp')) {
-              otpFromResponse = responseData['otp']?.toString();
-            }
-            
-            // Build URL with mobile, team, and optional OTP
+            // Build URL with mobile and team - OTP auto-fill is disabled
             String otpUrl = '${RouterKey.login + RouterKey.otp}?mobile=${Uri.encodeComponent(normalizedMobile)}&team=${Uri.encodeComponent(selectedTeam.value)}';
-            if (otpFromResponse != null) {
-              otpUrl += '&otp=${Uri.encodeComponent(otpFromResponse)}';
-            }
             
             return GlobalContext.context.push(otpUrl);
           },
@@ -698,7 +691,7 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
               );
             }
             
-            // Role check is now done at OTP request stage in backend-tmms, not here
+            // Role check is now done at OTP request stage in backend-tmms
             // If we reach here, the user is allowed to login
             
             // User has authorized role - proceed with login

@@ -41,14 +41,16 @@ class _ContainerFormVerifyB2CState extends State<ContainerFormVerifyB2C> with Fo
               showCursor: true,
               length: 4,
               validator: (value) => validateOTP(context, value),
-            hapticFeedbackType: HapticFeedbackType.mediumImpact,
-            controller: context.read<AuthProvider>().otp,
-            // Completely disable autofill and suggestions for B2C
-            enableSuggestions: false,
-            // Keyboard type for OTP
-            keyboardType: TextInputType.number,
-            // Disable SMS autofill for B2C - use empty list instead of null to completely disable
-            autofillHints: const [],
+              hapticFeedbackType: HapticFeedbackType.mediumImpact,
+              controller: context.read<AuthProvider>().otp,
+              // Completely disable autofill and suggestions for B2C
+              enableSuggestions: false,
+              // Keyboard type for OTP
+              keyboardType: TextInputType.number,
+              // Disable SMS autofill for B2C - use empty list instead of null to completely disable
+              autofillHints: const [],
+              // Prevent autofill by setting textInputAction
+              textInputAction: TextInputAction.done,
             ),
           ),
         ),

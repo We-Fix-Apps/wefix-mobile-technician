@@ -60,31 +60,47 @@ class LoginRepositoryImpl implements LoginRepository {
         if (loginResponse.response.data['success'] == true || loginResponse.response.data['status'] == true) {
           return Right(Result.success(loginResponse.response.data));
         } else {
-          String errorMessage = loginResponse.response.data['message'] ?? 
-                               (lang == 'ar' ? loginResponse.response.data['messageAr'] : loginResponse.response.data['message']) ??
-                               'Failed to send OTP';
+          // Prioritize messageAr if language is Arabic and it exists, otherwise use message
+          final responseData = loginResponse.response.data;
+          String errorMessage;
+          
+          if (lang == 'ar' && responseData['messageAr'] != null && responseData['messageAr'].toString().isNotEmpty) {
+            // Use Arabic message from backend
+            errorMessage = responseData['messageAr'].toString().trim();
+          } else if (responseData['message'] != null && responseData['message'].toString().isNotEmpty) {
+            // Use English message from backend
+            errorMessage = responseData['message'].toString().trim();
+          } else {
+            // Fallback if no message provided
+            errorMessage = lang == 'ar' ? 'فشل إرسال رمز التحقق' : 'Failed to send OTP';
+          }
+          
           return Left(ServerFailure(message: errorMessage));
         }
       } else {
         // Handle different error status codes
-        // Always try to extract message from response first
-        String errorMessage = loginResponse.response.data['message']?.toString() ?? 
-                             (lang == 'ar' ? loginResponse.response.data['messageAr']?.toString() : null) ??
-                             'Failed to send OTP';
+        // Prioritize messageAr if language is Arabic and it exists, otherwise use message
+        final responseData = loginResponse.response.data;
+        String errorMessage;
         
-        // Only use default messages if no message was found in response
-        if (errorMessage == 'Failed to send OTP') {
+        if (lang == 'ar' && responseData['messageAr'] != null && responseData['messageAr'].toString().isNotEmpty) {
+          // Use Arabic message from backend
+          errorMessage = responseData['messageAr'].toString().trim();
+        } else if (responseData['message'] != null && responseData['message'].toString().isNotEmpty) {
+          // Use English message from backend
+          errorMessage = responseData['message'].toString().trim();
+        } else {
+          // Fallback to default messages only if backend didn't provide any message
+          errorMessage = 'Failed to send OTP';
+          
           if (loginResponse.response.statusCode == 404) {
             errorMessage = lang == 'ar' ? 'الحساب غير موجود' : 'Account does not exist';
           } else if (loginResponse.response.statusCode == 403) {
-            // 403 Forbidden - Role not allowed
-            errorMessage = lang == 'ar' ? 'تم رفض الوصول. هذا التطبيق متاح فقط للفنيين' : 'Access denied. This app is only available for Technicians';
+            errorMessage = lang == 'ar' ? 'تم رفض الوصول' : 'Access denied';
           } else if (loginResponse.response.statusCode == 423) {
             errorMessage = lang == 'ar' ? 'الحساب مؤقتاً مقفل' : 'Account temporarily locked';
           } else if (loginResponse.response.statusCode == 429) {
-            // Use messageAr from backend if available, otherwise use localized fallback
-            errorMessage = loginResponse.response.data['messageAr']?.toString() ?? 
-                          (lang == 'ar' ? 'يرجى الانتظار قبل طلب رمز جديد' : 'Please wait before requesting a new code');
+            errorMessage = lang == 'ar' ? 'يرجى الانتظار قبل طلب رمز جديد' : 'Please wait before requesting a new code';
           } else if (loginResponse.response.statusCode == 400) {
             errorMessage = lang == 'ar' ? 'رقم الهاتف غير صحيح' : 'Invalid phone number format';
           }
@@ -212,6 +228,7 @@ class LoginRepositoryImpl implements LoginRepository {
             
             UserModel userModel = UserModel.fromJson(userModelData);
             
+            // Role validation is handled by the backend - if we reach here, the user is authorized
             // Store token info separately in Hive for token management
             // This is done here because we have access to the raw response
             if (tokenInfo != null && team == 'B2B Team') {
@@ -273,30 +290,46 @@ class LoginRepositoryImpl implements LoginRepository {
             return Right(Result.success(userModel));
           }
         } else {
-          String errorMessage = sendOtpResponse.response.data['message'] ?? 
-                               (lang == 'ar' ? sendOtpResponse.response.data['messageAr'] : sendOtpResponse.response.data['message']) ??
-                               'OTP verification failed';
+          // Use messageAr if language is Arabic, otherwise use message
+          String errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? sendOtpResponse.response.data['message'])
+            : sendOtpResponse.response.data['message'])?.toString() ?? 'OTP verification failed';
           return Left(ServerFailure(message: errorMessage));
         }
       } else {
         // Handle different error status codes
-        String errorMessage = sendOtpResponse.response.data['message'] ?? 'OTP verification failed';
+        // Use messageAr if language is Arabic, otherwise use message
+        String errorMessage = (lang == 'ar' 
+          ? (sendOtpResponse.response.data['messageAr'] ?? sendOtpResponse.response.data['message'])
+          : sendOtpResponse.response.data['message'])?.toString() ?? 'OTP verification failed';
         
         // Map status codes to user-friendly messages
         if (sendOtpResponse.response.statusCode == 410) {
-          errorMessage = lang == 'ar' ? 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد' : 'OTP has expired. Please request a new OTP';
+          errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد')
+            : (sendOtpResponse.response.data['message'] ?? 'OTP has expired. Please request a new OTP'))?.toString() ?? 
+            (lang == 'ar' ? 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد' : 'OTP has expired. Please request a new OTP');
         } else if (sendOtpResponse.response.statusCode == 423) {
-          errorMessage = lang == 'ar' ? 'تم قفل الحساب مؤقتاً بسبب محاولات فاشلة كثيرة' : 'Account temporarily locked due to too many failed attempts';
+          errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? 'تم قفل الحساب مؤقتاً بسبب محاولات فاشلة كثيرة')
+            : (sendOtpResponse.response.data['message'] ?? 'Account temporarily locked due to too many failed attempts'))?.toString() ?? 
+            (lang == 'ar' ? 'تم قفل الحساب مؤقتاً بسبب محاولات فاشلة كثيرة' : 'Account temporarily locked due to too many failed attempts');
         } else if (sendOtpResponse.response.statusCode == 403) {
           // 403 Forbidden - Role not allowed
-          errorMessage = sendOtpResponse.response.data['message'] ?? 
-                        (lang == 'ar' ? 'تم رفض الوصول. هذا التطبيق متاح فقط للفنيين' : 'Access denied. This app is only available for Technicians');
+          errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? 'تم رفض الوصول. هذا التطبيق متاح فقط للفنيين')
+            : (sendOtpResponse.response.data['message'] ?? 'Access denied. This app is only available for Technicians'))?.toString() ?? 
+            (lang == 'ar' ? 'تم رفض الوصول. هذا التطبيق متاح فقط للفنيين' : 'Access denied. This app is only available for Technicians');
         } else if (sendOtpResponse.response.statusCode == 401) {
-          errorMessage = sendOtpResponse.response.data['message'] ?? 
-                        (lang == 'ar' ? 'رمز التحقق غير صحيح' : 'Invalid OTP');
+          errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? 'رمز التحقق غير صحيح')
+            : (sendOtpResponse.response.data['message'] ?? 'Invalid OTP'))?.toString() ?? 
+            (lang == 'ar' ? 'رمز التحقق غير صحيح' : 'Invalid OTP');
         } else if (sendOtpResponse.response.statusCode == 400) {
-          errorMessage = sendOtpResponse.response.data['message'] ?? 
-                        (lang == 'ar' ? 'بيانات غير صحيحة' : 'Invalid data');
+          errorMessage = (lang == 'ar' 
+            ? (sendOtpResponse.response.data['messageAr'] ?? 'بيانات غير صحيحة')
+            : (sendOtpResponse.response.data['message'] ?? 'Invalid data'))?.toString() ?? 
+            (lang == 'ar' ? 'بيانات غير صحيحة' : 'Invalid data');
         }
         
         return Left(ServerFailure(message: errorMessage));

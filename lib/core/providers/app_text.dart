@@ -275,4 +275,5 @@ class AppText {
   String get completedTicketInfo => getTranslation('completedTicketInfo');
   String get technicianAttachments => getTranslation('technicianAttachments');
   String get completionNote => getTranslation('completionNote');
+  String get accessDeniedServiceNotAvailable => getTranslation('accessDeniedServiceNotAvailable');
 }

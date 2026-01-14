@@ -26,13 +26,7 @@ class _ContainerFormVerifyB2BState extends State<ContainerFormVerifyB2B> with Fo
   @override
   void initState() {
     super.initState();
-    // Auto-fill OTP if provided (from response in development mode)
-    if (widget.otp != null && widget.otp!.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final authProvider = context.read<AuthProvider>();
-        authProvider.otp.text = widget.otp!;
-      });
-    }
+    // OTP auto-fill is disabled - users must manually enter OTP
   }
 
   @override
@@ -47,16 +41,16 @@ class _ContainerFormVerifyB2BState extends State<ContainerFormVerifyB2B> with Fo
               showCursor: true,
               length: 4,
               validator: (value) => validateOTP(context, value),
-            hapticFeedbackType: HapticFeedbackType.mediumImpact,
-            controller: context.read<AuthProvider>().otp,
-            // Enable SMS autofill - pinput automatically handles SMS autofill on Android
-            // Note: onCompleted is removed - user must manually press verify button
-            // Enable paste functionality
-            enableSuggestions: true,
-            // Keyboard type for OTP
-            keyboardType: TextInputType.number,
-            // Enable SMS autofill hint
-            autofillHints: const [AutofillHints.oneTimeCode],
+              hapticFeedbackType: HapticFeedbackType.mediumImpact,
+              controller: context.read<AuthProvider>().otp,
+              // Completely disable autofill and suggestions for B2B - prevent auto-fill
+              enableSuggestions: false,
+              // Keyboard type for OTP
+              keyboardType: TextInputType.number,
+              // Disable SMS autofill hint - use empty list to completely disable
+              autofillHints: const [],
+              // Prevent autofill by setting textInputAction
+              textInputAction: TextInputAction.done,
             ),
           ),
         ),

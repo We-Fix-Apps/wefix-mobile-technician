@@ -96,126 +96,130 @@ class ContainerHomeCardB2B extends StatelessWidget {
                     ),
                   ),
                   // Use Directionality based on language for proper RTL/LTR support
+                  // Reserve space for orange area: ~150px (100px logo + 20px margin on each side + 10px padding)
                   Positioned(
                     left: isRTL ? null : 20,
-                    right: isRTL ? 140 : null, // Reserve space for orange area (~130px)
+                    right: isRTL ? 70 : null, // Reserve space for orange area (~150px to prevent overlap)
                     top: 0,
                     bottom: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      child: Center(
-                        child: Consumer<HomeController>(
-                          builder: (context, controller, child) {
-                            final technician = controller.currentHomeData?.technician;
+                    child: Directionality(
+                      textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        child: Center(
+                          child: Consumer<HomeController>(
+                            builder: (context, controller, child) {
+                              final technician = controller.currentHomeData?.technician;
 
-                            // Get technician image
-                            final technicianImage = technician?.image;
-                            final imagePath = technicianImage ?? user?.profileImage ?? user?.image;
+                              // Get technician image
+                              final technicianImage = technician?.image;
+                              final imagePath = technicianImage ?? user?.profileImage ?? user?.image;
 
-                            // Construct full URL if image path is relative
-                            String? imageUrl;
-                            if (imagePath != null && imagePath.isNotEmpty) {
-                              if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-                                // Already a full URL
-                                imageUrl = imagePath;
-                              } else {
-                                // Relative path, prepend base URL
-                                String baseUrl = AppLinks.getServerForTeam();
-                                if (baseUrl.endsWith('/api/v1')) {
-                                  baseUrl = baseUrl.replaceAll('/api/v1', '');
-                                } else if (baseUrl.endsWith('/api/v1/')) {
-                                  baseUrl = baseUrl.replaceAll('/api/v1/', '');
+                              // Construct full URL if image path is relative
+                              String? imageUrl;
+                              if (imagePath != null && imagePath.isNotEmpty) {
+                                if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+                                  // Already a full URL
+                                  imageUrl = imagePath;
+                                } else {
+                                  // Relative path, prepend base URL
+                                  String baseUrl = AppLinks.getServerForTeam();
+                                  if (baseUrl.endsWith('/api/v1')) {
+                                    baseUrl = baseUrl.replaceAll('/api/v1', '');
+                                  } else if (baseUrl.endsWith('/api/v1/')) {
+                                    baseUrl = baseUrl.replaceAll('/api/v1/', '');
+                                  }
+                                  baseUrl = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+                                  imageUrl = '$baseUrl$imagePath';
                                 }
-                                baseUrl = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
-                                imageUrl = '$baseUrl$imagePath';
                               }
-                            }
 
-                            // Show name based on selected language
-                            String technicianName;
-                            if (lang == 'ar') {
-                              // For Arabic: show Arabic name only
-                              if (user?.fullName != null && user!.fullName!.isNotEmpty) {
-                                technicianName = user.fullName!;
-                              } else if (technician?.name != null && technician!.name!.isNotEmpty) {
-                                technicianName = technician.name!;
+                              // Show name based on selected language
+                              String technicianName;
+                              if (lang == 'ar') {
+                                // For Arabic: show Arabic name only
+                                if (user?.fullName != null && user!.fullName!.isNotEmpty) {
+                                  technicianName = user.fullName!;
+                                } else if (technician?.name != null && technician!.name!.isNotEmpty) {
+                                  technicianName = technician.name!;
+                                } else {
+                                  technicianName = '';
+                                }
                               } else {
-                                technicianName = '';
+                                // For English: show English name only
+                                if (user?.fullNameEnglish != null && user!.fullNameEnglish!.isNotEmpty) {
+                                  technicianName = user.fullNameEnglish!;
+                                } else if (technician?.nameEnglish != null && technician!.nameEnglish!.isNotEmpty) {
+                                  technicianName = technician.nameEnglish!;
+                                } else {
+                                  technicianName = '';
+                                }
                               }
-                            } else {
-                              // For English: show English name only
-                              if (user?.fullNameEnglish != null && user!.fullNameEnglish!.isNotEmpty) {
-                                technicianName = user.fullNameEnglish!;
-                              } else if (technician?.nameEnglish != null && technician!.nameEnglish!.isNotEmpty) {
-                                technicianName = technician.nameEnglish!;
-                              } else {
-                                technicianName = '';
-                              }
-                            }
 
-                            // Get company name
-                            final company = technician?.company;
-                            final companyName = lang == 'ar' ? (company?.nameArabic ?? company?.name ?? '') : (company?.nameEnglish ?? company?.name ?? '');
+                              // Get company name
+                              final company = technician?.company;
+                              final companyName = lang == 'ar' ? (company?.nameArabic ?? company?.name ?? '') : (company?.nameEnglish ?? company?.name ?? '');
 
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // Technician image above name
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.transparent),
-                                  child: ClipOval(
-                                    child:
-                                        imageUrl == null || imageUrl.isEmpty
-                                            ? Image.asset(Assets.imageUser, fit: BoxFit.cover)
-                                            : WidgetCachNetworkImage(radius: 1000, boxFit: BoxFit.cover, image: imageUrl),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                // Technician name with proper constraints
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Text(
-                                      technicianName,
-                                      style: AppTextStyle.style18B,
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Technician image above name
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.transparent),
+                                    child: ClipOval(
+                                      child:
+                                          imageUrl == null || imageUrl.isEmpty
+                                              ? Image.asset(Assets.imageUser, fit: BoxFit.cover)
+                                              : WidgetCachNetworkImage(radius: 1000, boxFit: BoxFit.cover, image: imageUrl),
                                     ),
                                   ),
-                                ),
-                                if (technicianName.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Text(
-                                      AppText(context).loading,
-                                      style: AppTextStyle.style14.copyWith(color: AppColor.grey),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                if (companyName.isNotEmpty) ...[
-                                  const SizedBox(height: 6),
-                                  // Company name with proper constraints
+                                  const SizedBox(height: 8),
+                                  // Technician name with proper constraints
                                   Flexible(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                                       child: Text(
-                                        companyName,
-                                        style: AppTextStyle.style14.copyWith(color: AppColor.grey),
+                                        technicianName,
+                                        style: AppTextStyle.style18B,
                                         textAlign: TextAlign.center,
-                                        maxLines: 1,
+                                        maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ),
+                                  if (technicianName.isEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                      child: Text(
+                                        AppText(context).loading,
+                                        style: AppTextStyle.style14.copyWith(color: AppColor.grey),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  if (companyName.isNotEmpty) ...[
+                                    const SizedBox(height: 6),
+                                    // Company name with proper constraints
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        child: Text(
+                                          companyName,
+                                          style: AppTextStyle.style14.copyWith(color: AppColor.grey),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

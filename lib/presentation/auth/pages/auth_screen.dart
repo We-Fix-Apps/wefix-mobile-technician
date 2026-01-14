@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constant/app_image.dart';
 import '../../../core/extension/gap.dart';
 import '../../../core/providers/app_text.dart';
+import '../../../core/router/router_key.dart';
+import '../../../core/services/hive_services/box_kes.dart';
 import '../../../core/unit/app_color.dart';
 import '../../../core/unit/app_text_style.dart';
 import '../../../core/widget/language_button.dart';
 import '../../../injection_container.dart';
 import '../controller/auth_provider.dart';
+import '../domain/model/user_model.dart';
 import '../widgets/widget_profile_image.dart';
 import '../widgets/widget_toggle_auth.dart';
 import '../widgets/widget_team_selector.dart';
@@ -16,8 +21,46 @@ import 'containers/auth_button.dart';
 import 'containers/container_form_login.dart';
 import 'containers/container_form_register.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Check if technician is already logged in and redirect if so
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuthAndRedirect();
+    });
+  }
+
+  void _checkAuthAndRedirect() {
+    try {
+      final box = sl<Box>(instanceName: BoxKeys.appBox);
+      final enableAuth = box.get(BoxKeys.enableAuth);
+      
+      // If user is authenticated, check their role
+      if (enableAuth == true) {
+        final userBox = sl<Box<User>>();
+        final user = userBox.get(BoxKeys.userData);
+        
+        // Check if user has valid technician role (21 = Technician, 22 = Sub-Technician)
+        if (user != null && (user.userRoleId == 21 || user.userRoleId == 22)) {
+          // User is already logged in as technician, redirect to layout
+          if (mounted) {
+            context.go(RouterKey.layout);
+          }
+        }
+      }
+    } catch (e) {
+      // If there's an error checking auth, allow login screen to show
+      // This handles cases where boxes might not be initialized yet
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

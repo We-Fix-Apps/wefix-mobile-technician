@@ -4193,6 +4193,12 @@
           "wordKey": "couldNotOpenStore",
           "value": "تعذر فتح المتجر. يرجى التحديث يدوياً.",
           "lang": "ar"
+        },
+        {
+          "id": 2405,
+          "wordKey": "accessDeniedServiceNotAvailable",
+          "value": "تم رفض الوصول. هذه الخدمة غير متاحة.",
+          "lang": "ar"
         }
       ],
       "key": "ar"
@@ -8413,6 +8419,12 @@
           "id": 2389,
           "wordKey": "failedToSendOTP",
           "value": "Failed to send OTP",
+          "lang": "en"
+        },
+        {
+          "id": 2405,
+          "wordKey": "accessDeniedServiceNotAvailable",
+          "value": "Access denied. This service is not available.",
           "lang": "en"
         }
       ],
