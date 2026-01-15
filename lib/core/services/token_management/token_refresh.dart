@@ -1,16 +1,13 @@
 import 'dart:developer';
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../constant/app_links.dart';
-import '../../context/global.dart';
 import '../../services/api_services/api_client.dart';
 import '../../services/api_services/dio_helper.dart';
 import '../../services/hive_services/box_kes.dart';
-import '../../router/router_key.dart';
 import '../../../injection_container.dart';
 import 'token_utils.dart';
+import 'force_logout.dart';
 
 /// Refresh promise to prevent multiple simultaneous refresh calls
 Future<bool>? _refreshPromise;
@@ -158,14 +155,14 @@ Future<bool> ensureValidToken() async {
         
         if (!refreshed) {
           // Refresh failed - force logout
-          await _forceLogout();
+          await forceLogout();
           return false;
         }
         
         return true;
       } else {
         // No refresh token - force logout
-        await _forceLogout();
+        await forceLogout();
         return false;
       }
     }
@@ -190,37 +187,6 @@ Future<bool> ensureValidToken() async {
   } catch (e) {
     log('Error ensuring valid token: $e');
     return false;
-  }
-}
-
-/// Force logout user when token expires or refresh fails
-Future<void> _forceLogout() async {
-  try {
-    // Schedule logout after current frame is built to avoid setState during build
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final box = sl<Box>(instanceName: BoxKeys.appBox);
-        final userBox = sl<Box>(instanceName: BoxKeys.userData);
-        
-        // Clear all user data and tokens
-        await box.delete(BoxKeys.usertoken);
-        await box.delete('${BoxKeys.usertoken}_refresh');
-        await box.delete('${BoxKeys.usertoken}_expiresAt');
-        await box.delete(BoxKeys.enableAuth);
-        await box.delete(BoxKeys.userTeam);
-        await userBox.delete(BoxKeys.userData);
-
-        // Navigate to login screen
-        final context = GlobalContext.context;
-        if (context.mounted) {
-          context.go(RouterKey.login);
-        }
-      } catch (e) {
-        log('Error during force logout: $e');
-      }
-    });
-  } catch (e) {
-    log('Error scheduling force logout: $e');
   }
 }
 

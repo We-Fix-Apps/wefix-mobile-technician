@@ -637,6 +637,12 @@
           "lang": "ar"
         },
         {
+          "id": 1001,
+          "wordKey": "accountInactiveMessage",
+          "value": "حسابك غير نشط. يرجى التواصل مع المسؤول لتفعيل حسابك",
+          "lang": "ar"
+        },
+        {
           "id": 337,
           "wordKey": "sucessUpdateProfile",
           "value": "تم تحديث الملف الشخصي بنجاح",
@@ -4843,6 +4849,12 @@
           "id": 106,
           "wordKey": "somethingErrorInSendYourMessage",
           "value": "Something Error in Send Your Message",
+          "lang": "en"
+        },
+        {
+          "id": 1001,
+          "wordKey": "accountInactiveMessage",
+          "value": "Your account is inactive. Please contact your administrator",
           "lang": "en"
         },
         {

@@ -249,6 +249,10 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
                     } else if (errorMessage.toLowerCase().contains('locked')) {
                       final localized = AppText(context).accountTemporarilyLocked;
                       errorMessage = localized.isNotEmpty ? localized : errorMessage;
+                    } else if (errorMessage.toLowerCase().contains('inactive') ||
+                               errorMessage.toLowerCase().contains('غير نشط')) {
+                      final localized = AppText(context).accountInactiveMessage;
+                      errorMessage = localized.isNotEmpty ? localized : errorMessage;
                     } else if (errorMessage.toLowerCase().contains('wait') || 
                                errorMessage.toLowerCase().contains('rate') ||
                                errorMessage.toLowerCase().contains('seconds before')) {
@@ -654,7 +658,11 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
             
             // Provide more specific error messages based on error type
             String errorMessage = l.message;
-            if (l.message.toLowerCase().contains('expired')) {
+            if (l.message.toLowerCase().contains('inactive') ||
+                l.message.toLowerCase().contains('غير نشط')) {
+              final localized = AppText(GlobalContext.context).accountInactiveMessage;
+              errorMessage = localized.isNotEmpty ? localized : l.message;
+            } else if (l.message.toLowerCase().contains('expired')) {
               errorMessage = 'OTP has expired. Please request a new OTP';
             } else if (l.message.toLowerCase().contains('locked') || 
                        l.message.toLowerCase().contains('lockout')) {

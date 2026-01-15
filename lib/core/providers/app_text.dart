@@ -276,4 +276,5 @@ class AppText {
   String get technicianAttachments => getTranslation('technicianAttachments');
   String get completionNote => getTranslation('completionNote');
   String get accessDeniedServiceNotAvailable => getTranslation('accessDeniedServiceNotAvailable');
+  String get accountInactiveMessage => getTranslation('accountInactiveMessage');
 }

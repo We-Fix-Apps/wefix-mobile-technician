@@ -13,10 +13,7 @@ class AuthInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     try {
       // Skip token check for login/refresh endpoints
-      if (options.path.contains('login') || 
-          options.path.contains('request-otp') || 
-          options.path.contains('verify-otp') ||
-          options.path.contains('refresh-token')) {
+      if (options.path.contains('login') || options.path.contains('request-otp') || options.path.contains('verify-otp') || options.path.contains('refresh-token')) {
         return handler.next(options);
       }
 
@@ -31,7 +28,7 @@ class AuthInterceptor extends Interceptor {
       // Get token from storage
       final box = sl<Box>(instanceName: BoxKeys.appBox);
       final token = box.get(BoxKeys.usertoken);
-      
+
       // Add token to request if available
       if (token != null && token.toString().isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
@@ -39,7 +36,7 @@ class AuthInterceptor extends Interceptor {
     } catch (e) {
       log('Error in AuthInterceptor onRequest: $e');
     }
-    
+
     handler.next(options);
   }
 
@@ -49,8 +46,8 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
       try {
         // Skip for login/refresh endpoints
-        if (err.requestOptions.path.contains('login') || 
-            err.requestOptions.path.contains('request-otp') || 
+        if (err.requestOptions.path.contains('login') ||
+            err.requestOptions.path.contains('request-otp') ||
             err.requestOptions.path.contains('verify-otp') ||
             err.requestOptions.path.contains('refresh-token')) {
           return handler.next(err);
@@ -64,37 +61,41 @@ class AuthInterceptor extends Interceptor {
           return handler.next(err);
         }
 
-        // Try to refresh token
+        // For 403, force logout immediately (invalid token for service, etc.)
+        if (err.response?.statusCode == 403) {
+          log('403 Forbidden - forcing logout');
+          await forceLogout();
+          return handler.next(err);
+        }
+
+        // For 401, try to refresh token
         final refreshed = await refreshAccessToken();
-        
         if (refreshed) {
           // Retry the original request with new token
           final box = sl<Box>(instanceName: BoxKeys.appBox);
           final newToken = box.get(BoxKeys.usertoken);
-          
+
           if (newToken != null && newToken.toString().isNotEmpty) {
-            // Update the request with new token
             err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-            
-            // Retry the request
             try {
               final response = await Dio().fetch(err.requestOptions);
               return handler.resolve(response);
             } catch (e) {
-              // Retry failed, proceed with error
+              log('Retry failed after refresh - forcing logout');
+              await forceLogout();
               return handler.next(err);
             }
           }
         }
         
-        // Refresh failed or no token - the force logout will be handled in token_refresh.dart
-        // Don't retry, let the error propagate
+        // Refresh failed - force logout
+        log('Token refresh failed - forcing logout');
+        await forceLogout();
       } catch (e) {
         log('Error in AuthInterceptor onError: $e');
       }
     }
-    
+
     handler.next(err);
   }
 }
-
