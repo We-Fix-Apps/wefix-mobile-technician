@@ -2765,6 +2765,8 @@ mixin _$CreatorInfo {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: "name")
   String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: "nameEnglish")
+  String? get nameEnglish => throw _privateConstructorUsedError;
   @JsonKey(name: "userNumber")
   String? get userNumber => throw _privateConstructorUsedError;
   @JsonKey(name: "mobileNumber")
@@ -2789,6 +2791,7 @@ abstract class $CreatorInfoCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: "id") int? id,
       @JsonKey(name: "name") String? name,
+      @JsonKey(name: "nameEnglish") String? nameEnglish,
       @JsonKey(name: "userNumber") String? userNumber,
       @JsonKey(name: "mobileNumber") String? mobileNumber,
       @JsonKey(name: "countryCode") String? countryCode,
@@ -2810,6 +2813,7 @@ class _$CreatorInfoCopyWithImpl<$Res, $Val extends CreatorInfo>
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
+    Object? nameEnglish = freezed,
     Object? userNumber = freezed,
     Object? mobileNumber = freezed,
     Object? countryCode = freezed,
@@ -2823,6 +2827,10 @@ class _$CreatorInfoCopyWithImpl<$Res, $Val extends CreatorInfo>
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nameEnglish: freezed == nameEnglish
+          ? _value.nameEnglish
+          : nameEnglish // ignore: cast_nullable_to_non_nullable
               as String?,
       userNumber: freezed == userNumber
           ? _value.userNumber
@@ -2855,6 +2863,7 @@ abstract class _$$CreatorInfoImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: "id") int? id,
       @JsonKey(name: "name") String? name,
+      @JsonKey(name: "nameEnglish") String? nameEnglish,
       @JsonKey(name: "userNumber") String? userNumber,
       @JsonKey(name: "mobileNumber") String? mobileNumber,
       @JsonKey(name: "countryCode") String? countryCode,
@@ -2874,6 +2883,7 @@ class __$$CreatorInfoImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
+    Object? nameEnglish = freezed,
     Object? userNumber = freezed,
     Object? mobileNumber = freezed,
     Object? countryCode = freezed,
@@ -2887,6 +2897,10 @@ class __$$CreatorInfoImplCopyWithImpl<$Res>
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nameEnglish: freezed == nameEnglish
+          ? _value.nameEnglish
+          : nameEnglish // ignore: cast_nullable_to_non_nullable
               as String?,
       userNumber: freezed == userNumber
           ? _value.userNumber
@@ -2914,6 +2928,7 @@ class _$CreatorInfoImpl implements _CreatorInfo {
   const _$CreatorInfoImpl(
       {@JsonKey(name: "id") this.id,
       @JsonKey(name: "name") this.name,
+      @JsonKey(name: "nameEnglish") this.nameEnglish,
       @JsonKey(name: "userNumber") this.userNumber,
       @JsonKey(name: "mobileNumber") this.mobileNumber,
       @JsonKey(name: "countryCode") this.countryCode,
@@ -2929,6 +2944,9 @@ class _$CreatorInfoImpl implements _CreatorInfo {
   @JsonKey(name: "name")
   final String? name;
   @override
+  @JsonKey(name: "nameEnglish")
+  final String? nameEnglish;
+  @override
   @JsonKey(name: "userNumber")
   final String? userNumber;
   @override
@@ -2943,7 +2961,7 @@ class _$CreatorInfoImpl implements _CreatorInfo {
 
   @override
   String toString() {
-    return 'CreatorInfo(id: $id, name: $name, userNumber: $userNumber, mobileNumber: $mobileNumber, countryCode: $countryCode, image: $image)';
+    return 'CreatorInfo(id: $id, name: $name, nameEnglish: $nameEnglish, userNumber: $userNumber, mobileNumber: $mobileNumber, countryCode: $countryCode, image: $image)';
   }
 
   @override
@@ -2953,6 +2971,8 @@ class _$CreatorInfoImpl implements _CreatorInfo {
             other is _$CreatorInfoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.nameEnglish, nameEnglish) ||
+                other.nameEnglish == nameEnglish) &&
             (identical(other.userNumber, userNumber) ||
                 other.userNumber == userNumber) &&
             (identical(other.mobileNumber, mobileNumber) ||
@@ -2964,8 +2984,8 @@ class _$CreatorInfoImpl implements _CreatorInfo {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, name, userNumber, mobileNumber, countryCode, image);
+  int get hashCode => Object.hash(runtimeType, id, name, nameEnglish,
+      userNumber, mobileNumber, countryCode, image);
 
   @JsonKey(ignore: true)
   @override
@@ -2985,6 +3005,7 @@ abstract class _CreatorInfo implements CreatorInfo {
   const factory _CreatorInfo(
       {@JsonKey(name: "id") final int? id,
       @JsonKey(name: "name") final String? name,
+      @JsonKey(name: "nameEnglish") final String? nameEnglish,
       @JsonKey(name: "userNumber") final String? userNumber,
       @JsonKey(name: "mobileNumber") final String? mobileNumber,
       @JsonKey(name: "countryCode") final String? countryCode,
@@ -2999,6 +3020,9 @@ abstract class _CreatorInfo implements CreatorInfo {
   @override
   @JsonKey(name: "name")
   String? get name;
+  @override
+  @JsonKey(name: "nameEnglish")
+  String? get nameEnglish;
   @override
   @JsonKey(name: "userNumber")
   String? get userNumber;

@@ -17,6 +17,9 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
+import 'package:open_file/open_file.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import '../../../core/constant/app_image.dart';
 import '../../../core/constant/app_links.dart';
@@ -1082,14 +1085,94 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
         fullUrl = '$baseUrl/$url';
       }
       
-      log('Launching attachment URL: $fullUrl');
-      final uris = Uri.parse(fullUrl);
-      final launched = await launchUrl(uris, mode: LaunchMode.externalApplication);
-      if (!launched) {
-        log('Failed to launch attachment URL: $fullUrl');
+      log('Opening attachment URL: $fullUrl');
+      
+      // Check if it's a local file path (not starting with http/https)
+      final isLocalFile = !fullUrl.startsWith('http://') && !fullUrl.startsWith('https://');
+      
+      if (isLocalFile) {
+        // For local files, open directly with system default app
+        final result = await OpenFile.open(fullUrl);
+        if (result.type != ResultType.done) {
+          log('Could not open file: ${result.message}');
+        }
+      } else {
+        // For remote URLs (http/https), download first then open with native apps
+        await _downloadAndOpenFile(fullUrl);
       }
     } catch (e) {
-      log('Error launching attachment: $e');
+      log('Error opening attachment: $e');
+    }
+  }
+
+  Future<void> _downloadAndOpenFile(String url) async {
+    try {
+      // Show loading indicator
+      SmartDialog.showLoading(msg: AppText(GlobalContext.context, isFunction: true).loading);
+
+      // Download the file
+      final response = await http.get(Uri.parse(url));
+      
+      if (response.statusCode != 200) {
+        SmartDialog.dismiss();
+        SmartDialog.show(
+          builder: (context) => WidgetDilog(
+            isError: true,
+            title: AppText(context).warning,
+            message: 'Failed to download file: ${response.statusCode}',
+            cancelText: AppText(context).back,
+            onCancel: () => SmartDialog.dismiss(),
+          ),
+        );
+        return;
+      }
+
+      // Get cache directory (properly configured for FileProvider)
+      final cacheDir = await getTemporaryDirectory();
+      
+      // Extract file name from URL
+      final uri = Uri.parse(url);
+      final pathSegments = uri.pathSegments;
+      final fileName = pathSegments.isNotEmpty 
+          ? pathSegments.last 
+          : 'file_${DateTime.now().millisecondsSinceEpoch}';
+      
+      // Create temporary file path
+      final filePath = '${cacheDir.path}/$fileName';
+      final file = File(filePath);
+      
+      // Write downloaded bytes to file
+      await file.writeAsBytes(response.bodyBytes);
+      
+      // Hide loading indicator
+      SmartDialog.dismiss();
+
+      // Open the downloaded file with native apps (gallery, PDF reader, video player, etc.)
+      final result = await OpenFile.open(filePath);
+      
+      if (result.type != ResultType.done) {
+        SmartDialog.show(
+          builder: (context) => WidgetDilog(
+            isError: true,
+            title: AppText(context).warning,
+            message: 'Could not open file: ${result.message}',
+            cancelText: AppText(context).back,
+            onCancel: () => SmartDialog.dismiss(),
+          ),
+        );
+      }
+    } catch (e) {
+      SmartDialog.dismiss();
+      log('Error downloading/opening file: $e');
+      SmartDialog.show(
+        builder: (context) => WidgetDilog(
+          isError: true,
+          title: AppText(context).warning,
+          message: 'Error downloading/opening file: $e',
+          cancelText: AppText(context).back,
+          onCancel: () => SmartDialog.dismiss(),
+        ),
+      );
     }
   }
 

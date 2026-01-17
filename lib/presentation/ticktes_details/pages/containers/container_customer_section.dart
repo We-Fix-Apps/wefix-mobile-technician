@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constant/app_image.dart';
 import '../../../../core/extension/gap.dart';
 import '../../../../core/providers/app_text.dart';
+import '../../../../core/providers/language_provider/l10n_provider.dart';
 import '../../../../core/unit/app_text_style.dart';
 import '../../../../core/widget/widget_cache_network_image.dart';
 import '../../../../core/widget/widget_loading.dart';
@@ -58,7 +59,7 @@ class ContainerCustomerSection extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                creator.name ?? '',
+                                _formatCreatorName(context, creator),
                                 overflow: TextOverflow.ellipsis, 
                                 style: AppTextStyle.style14B
                               ),
@@ -105,6 +106,35 @@ class ContainerCustomerSection extends StatelessWidget {
     } else if (countryCode != null) {
       return countryCode;
     }
+    return '';
+  }
+
+  String _formatCreatorName(BuildContext context, dynamic creator) {
+    if (creator == null) return '';
+    
+    final name = creator.name?.toString() ?? ''; // Arabic name from backend
+    final nameEnglish = creator.nameEnglish?.toString() ?? ''; // English name from backend
+    
+    // Get current language from provider
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final currentLang = languageProvider.lang ?? 'en';
+    
+    // If both Arabic and English names are available, show both
+    if (name.isNotEmpty && nameEnglish.isNotEmpty) {
+      return currentLang == "ar" 
+        ? '$name ($nameEnglish)'
+        : '$nameEnglish ($name)';
+    }
+    
+    // If only one language is available, use it
+    if (name.isNotEmpty) {
+      return name;
+    }
+    
+    if (nameEnglish.isNotEmpty) {
+      return nameEnglish;
+    }
+    
     return '';
   }
 }

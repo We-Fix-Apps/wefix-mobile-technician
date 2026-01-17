@@ -243,6 +243,7 @@ _$CreatorInfoImpl _$$CreatorInfoImplFromJson(Map<String, dynamic> json) =>
     _$CreatorInfoImpl(
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
+      nameEnglish: json['nameEnglish'] as String?,
       userNumber: json['userNumber'] as String?,
       mobileNumber: json['mobileNumber'] as String?,
       countryCode: json['countryCode'] as String?,
@@ -253,6 +254,7 @@ Map<String, dynamic> _$$CreatorInfoImplToJson(_$CreatorInfoImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'nameEnglish': instance.nameEnglish,
       'userNumber': instance.userNumber,
       'mobileNumber': instance.mobileNumber,
       'countryCode': instance.countryCode,

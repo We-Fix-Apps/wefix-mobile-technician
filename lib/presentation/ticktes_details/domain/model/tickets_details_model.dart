@@ -138,6 +138,7 @@ class CreatorInfo with _$CreatorInfo {
   const factory CreatorInfo({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "name") String? name,
+    @JsonKey(name: "nameEnglish") String? nameEnglish,
     @JsonKey(name: "userNumber") String? userNumber,
     @JsonKey(name: "mobileNumber") String? mobileNumber,
     @JsonKey(name: "countryCode") String? countryCode,
