@@ -19,7 +19,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 
 import '../../../core/constant/app_image.dart';
 import '../../../core/constant/app_links.dart';
@@ -418,23 +417,29 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
       return;
     }
 
+    // Reset the flag when opening the attachment screen
+    _ticketStarted = false;
+
     // Navigate to attachment upload screen
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WidgetStartTicketAttachment(
           ticketId: id,
-          onAttachmentSelected: (filePath, fileType) async {
-            Navigator.pop(context);
-            await _handleStartTicketWithAttachment(id, filePath, fileType);
+          onAttachmentSelected: (filePath, fileType, isFirstFile) async {
+            // Don't pop here - let the widget handle it after all files are uploaded
+            await _handleStartTicketWithAttachment(id, filePath, fileType, isFirstFile: isFirstFile);
           },
         ),
       ),
     );
   }
 
+  // Track if ticket has been started (to prevent multiple start calls)
+  bool _ticketStarted = false;
+
   // Handle starting ticket with attachment
-  Future<void> _handleStartTicketWithAttachment(String id, String filePath, String fileType) async {
+  Future<void> _handleStartTicketWithAttachment(String id, String filePath, String fileType, {bool isFirstFile = false}) async {
     try {
       SmartDialog.showLoading(msg: AppText(GlobalContext.context, isFunction: true).loading);
       
@@ -535,8 +540,30 @@ class TicktesDetailsController extends ChangeNotifier with WidgetsBindingObserve
           return;
         }
         
-        // Start ticket with attachment URL
-        await startTicketWithAttachment(id, attachmentUrl.toString());
+        // Only start ticket with the first file upload
+        // Subsequent files are just uploaded without starting the ticket again
+        if (isFirstFile && !_ticketStarted) {
+          // Check if ticket is already in progress before starting
+          final currentStatus = ticketsDetails?.status?.toLowerCase();
+          if (currentStatus == 'in progress' || currentStatus == 'in_progress') {
+            // Ticket is already started, just upload the file
+            log('Ticket already in progress, skipping start call');
+            _ticketStarted = true;
+            SmartDialog.dismiss();
+            // Refresh ticket details to show new attachment
+            ticketDetails(id);
+          } else {
+            // Start ticket with attachment URL
+            await startTicketWithAttachment(id, attachmentUrl.toString());
+            _ticketStarted = true;
+          }
+        } else {
+          // For subsequent files, just upload them (ticket is already started)
+          log('Ticket already started, skipping start call for additional file');
+          SmartDialog.dismiss();
+          // Refresh ticket details to show new attachment
+          ticketDetails(id);
+        }
       } catch (e, stackTrace) {
         SmartDialog.dismiss();
         log('Error uploading file: $e\n$stackTrace');

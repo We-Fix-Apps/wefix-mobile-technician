@@ -17,8 +17,11 @@ class HomeScreen extends StatelessWidget {
     return Consumer<HomeController>(
       builder: (context, state, child) {
         return RefreshIndicator.adaptive(
-          onRefresh: () async => state.checkAccess(),
+          onRefresh: () async {
+            await state.getHomeData();
+          },
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

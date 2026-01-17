@@ -73,7 +73,7 @@ class WidgetCardRequests extends StatelessWidget {
             loading == true
                 ? const Row(children: [WidgetLoading(width: 50)])
                 : Text(
-                  '${DateFormat("MMM, d yyyy").format(tickets?.date ?? DateTime.now())} ${DateFormat("HH:mm").format(DateTime.tryParse(tickets?.time ?? '') ?? DateTime.now())}',
+                  _formatTicketDateTime(context, tickets?.date, tickets?.time, tickets?.ticketTimeTo),
                   style: AppTextStyle.style11,
                 ),
         trailing: Row(
@@ -92,6 +92,62 @@ class WidgetCardRequests extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatTicketDateTime(BuildContext context, DateTime? date, String? time, String? timeTo) {
+    // Format date as dd-MMMM-yyyy (e.g., "17-January-2026")
+    // Always use English locale for month names to ensure consistent format
+    // This prevents RTL issues in Arabic mode
+    final dateFormat = DateFormat("dd-MMMM-yyyy", "en_US");
+    final dateStr = date != null 
+        ? dateFormat.format(date)
+        : dateFormat.format(DateTime.now());
+    
+    // Format time from ticketTimeFrom (e.g., "14:00:00" -> "14:00")
+    String timeStr = '';
+    if (time != null && time.isNotEmpty) {
+      try {
+        // ticketTimeFrom is already in "HH:mm:ss" or "HH:mm" format from backend
+        final timeParts = time.split(':');
+        if (timeParts.length >= 2) {
+          // Take only hours and minutes (HH:mm)
+          timeStr = '${timeParts[0]}:${timeParts[1]}';
+        } else {
+          timeStr = time;
+        }
+      } catch (e) {
+        timeStr = time;
+      }
+    }
+    
+    // Format timeTo from ticketTimeTo (e.g., "16:00:00" -> "16:00")
+    String timeToStr = '';
+    if (timeTo != null && timeTo.isNotEmpty) {
+      try {
+        // ticketTimeTo is already in "HH:mm:ss" or "HH:mm" format from backend
+        final timeToParts = timeTo.split(':');
+        if (timeToParts.length >= 2) {
+          // Take only hours and minutes (HH:mm)
+          timeToStr = '${timeToParts[0]}:${timeToParts[1]}';
+        } else {
+          timeToStr = timeTo;
+        }
+      } catch (e) {
+        timeToStr = timeTo;
+      }
+    }
+    
+    // Combine date and time(s) with LTR mark to prevent RTL reversal in Arabic
+    // \u200E is the Left-to-Right Mark (LRM) Unicode character
+    String result = '\u200E$dateStr';
+    if (timeStr.isNotEmpty) {
+      result += ' $timeStr';
+      if (timeToStr.isNotEmpty) {
+        result += ' - $timeToStr';
+      }
+    }
+    
+    return result.trim();
   }
 
   Color _statusColor(String status) {

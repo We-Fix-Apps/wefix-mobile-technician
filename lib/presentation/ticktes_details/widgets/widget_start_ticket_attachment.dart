@@ -13,9 +13,23 @@ import '../../../core/unit/app_text_style.dart';
 import '../../../core/widget/button/app_button.dart';
 import '../../../core/widget/language_button.dart';
 
+class AttachmentItem {
+  final String filePath;
+  final String fileType; // 'file', 'image', 'video', 'audio'
+  final String? fileName;
+  final int? duration; // For audio files
+
+  AttachmentItem({
+    required this.filePath,
+    required this.fileType,
+    this.fileName,
+    this.duration,
+  });
+}
+
 class WidgetStartTicketAttachment extends StatefulWidget {
   final String ticketId;
-  final Function(String filePath, String fileType) onAttachmentSelected;
+  final Future<void> Function(String filePath, String fileType, bool isFirstFile) onAttachmentSelected;
 
   const WidgetStartTicketAttachment({
     super.key,
@@ -28,18 +42,15 @@ class WidgetStartTicketAttachment extends StatefulWidget {
 }
 
 class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachment> {
-  PlatformFile? selectedFile;
+  final List<AttachmentItem> attachments = [];
   bool isRecording = false;
   final record = AudioRecorder();
-  String? audioPath;
-  String? imagePath;
   final ImagePicker _imagePicker = ImagePicker();
-  String? selectedFilePath;
-  String? selectedFileType; // 'file', 'image', 'video', 'audio'
   bool loading = false;
 
   Timer? _timer;
   int _seconds = 0;
+  String? _currentRecordingPath;
 
   @override
   void initState() {
@@ -62,15 +73,18 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
   }
 
   Future<void> pickFile() async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result != null && result.files.isNotEmpty) {
       setState(() {
-        selectedFile = result.files.first;
-        selectedFilePath = result.files.first.path;
-        selectedFileType = 'file';
-        // Clear other selections
-        audioPath = null;
-        imagePath = null;
+        for (var file in result.files) {
+          if (file.path != null) {
+            attachments.add(AttachmentItem(
+              filePath: file.path!,
+              fileType: 'file',
+              fileName: file.name,
+            ));
+          }
+        }
       });
     }
   }
@@ -92,12 +106,11 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
                 final picked = await _imagePicker.pickImage(source: ImageSource.camera);
                 if (picked != null) {
                   setState(() {
-                    imagePath = picked.path;
-                    selectedFilePath = picked.path;
-                    selectedFileType = 'image';
-                    // Clear other selections
-                    selectedFile = null;
-                    audioPath = null;
+                    attachments.add(AttachmentItem(
+                      filePath: picked.path,
+                      fileType: 'image',
+                      fileName: picked.path.split('/').last,
+                    ));
                   });
                 }
                 Navigator.pop(context);
@@ -110,12 +123,11 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
                 final picked = await _imagePicker.pickVideo(source: ImageSource.camera);
                 if (picked != null) {
                   setState(() {
-                    imagePath = picked.path;
-                    selectedFilePath = picked.path;
-                    selectedFileType = 'video';
-                    // Clear other selections
-                    selectedFile = null;
-                    audioPath = null;
+                    attachments.add(AttachmentItem(
+                      filePath: picked.path,
+                      fileType: 'video',
+                      fileName: picked.path.split('/').last,
+                    ));
                   });
                 }
                 Navigator.pop(context);
@@ -141,13 +153,8 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
     await record.start(const RecordConfig(), path: path);
     setState(() {
       isRecording = true;
-      audioPath = path;
-      selectedFilePath = path;
-      selectedFileType = 'audio';
+      _currentRecordingPath = path;
       _seconds = 0;
-      // Clear other selections
-      selectedFile = null;
-      imagePath = null;
     });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -159,19 +166,24 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
 
   Future<void> stopRecording() async {
     final path = await record.stop();
-    if (path != null) {
+    if (path != null && _currentRecordingPath != null) {
       setState(() {
         isRecording = false;
-        audioPath = path;
-        selectedFilePath = path;
-        selectedFileType = 'audio';
+        attachments.add(AttachmentItem(
+          filePath: path,
+          fileType: 'audio',
+          fileName: path.split('/').last,
+          duration: _seconds,
+        ));
+        _currentRecordingPath = null;
+        _seconds = 0;
       });
       _timer?.cancel();
     }
   }
 
-  void _handleContinue() {
-    if (selectedFilePath == null || selectedFileType == null) {
+  Future<void> _handleContinue() async {
+    if (attachments.isEmpty) {
       // Show error - attachment required
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -182,7 +194,39 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
       return;
     }
 
-    widget.onAttachmentSelected(selectedFilePath!, selectedFileType!);
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      // Send all attachments one by one sequentially
+      // Only the first file should start the ticket
+      for (int i = 0; i < attachments.length; i++) {
+        final attachment = attachments[i];
+        final isFirstFile = i == 0; // Only first file starts the ticket
+        await widget.onAttachmentSelected(attachment.filePath, attachment.fileType, isFirstFile);
+      }
+      // Close the screen after all files are uploaded
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      // Handle error if needed
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error uploading files: $e'),
+            backgroundColor: AppColor.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -226,13 +270,20 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
               onTap: isRecording ? stopRecording : startRecording,
             ),
             20.gap,
-            if (selectedFilePath != null) ...[
+            if (attachments.isNotEmpty) ...[
               Text(
                 AppText(context).attachments,
                 style: AppTextStyle.style14B,
               ),
               10.gap,
-              _buildAttachmentPreview(),
+              ...attachments.asMap().entries.map((entry) {
+                final index = entry.key;
+                final attachment = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _buildAttachmentPreview(attachment, index),
+                );
+              }).toList(),
             ],
           ],
         ),
@@ -282,7 +333,7 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
     );
   }
 
-  Widget _buildAttachmentPreview() {
+  Widget _buildAttachmentPreview(AttachmentItem attachment, int index) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -291,25 +342,31 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
       ),
       child: Row(
         children: [
-          _getAttachmentIcon(),
+          _getAttachmentIcon(attachment.fileType),
           12.gap,
           Expanded(
-            child: Text(
-              selectedFile?.name ?? selectedFilePath!.split('/').last,
-              style: AppTextStyle.style12,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  attachment.fileName ?? attachment.filePath.split('/').last,
+                  style: AppTextStyle.style12,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (attachment.fileType == 'audio' && attachment.duration != null)
+                  Text(
+                    '${attachment.duration}s',
+                    style: AppTextStyle.style10.copyWith(color: AppColor.grey),
+                  ),
+              ],
             ),
           ),
           IconButton(
             icon: const Icon(Icons.remove_circle, color: AppColor.red),
             onPressed: () {
               setState(() {
-                selectedFilePath = null;
-                selectedFileType = null;
-                selectedFile = null;
-                audioPath = null;
-                imagePath = null;
+                attachments.removeAt(index);
               });
             },
           ),
@@ -318,12 +375,12 @@ class _WidgetStartTicketAttachmentState extends State<WidgetStartTicketAttachmen
     );
   }
 
-  Widget _getAttachmentIcon() {
-    if (selectedFileType == 'audio') {
+  Widget _getAttachmentIcon(String fileType) {
+    if (fileType == 'audio') {
       return Icon(Icons.mic, size: 40, color: AppColor.primaryColor);
-    } else if (selectedFileType == 'video') {
+    } else if (fileType == 'video') {
       return Icon(Icons.videocam, size: 40, color: AppColor.primaryColor);
-    } else if (selectedFileType == 'image') {
+    } else if (fileType == 'image') {
       return Icon(Icons.image, size: 40, color: AppColor.primaryColor);
     } else {
       return Icon(Icons.attach_file, size: 40, color: AppColor.primaryColor);
