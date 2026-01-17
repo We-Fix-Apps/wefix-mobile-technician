@@ -25,6 +25,7 @@ import '../../../core/services/hive_services/box_kes.dart';
 import '../../../core/unit/app_color.dart';
 import '../../../core/unit/app_text_style.dart';
 import '../../../core/widget/widget_daialog.dart';
+import '../../../core/services/token_management/token_refresh.dart';
 import '../../../injection_container.dart';
 import '../domain/auth_enum.dart';
 import '../domain/model/contact_info_model.dart';
@@ -532,26 +533,6 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // Helper method to get role name for display
-  String _getRoleName(BuildContext context, int roleId) {
-    switch (roleId) {
-      case 26:
-        return AppText(context).roleSuperUser;
-      case 23:
-        return AppText(context).roleIndividual;
-      case 20:
-        return AppText(context).roleTeamLeader;
-      case 21:
-        return AppText(context).roleTechnician;
-      case 22:
-        return AppText(context).roleSubTechnician;
-      case 18:
-        return AppText(context).roleAdmin;
-      default:
-        return AppText(context).roleUnknown(roleId);
-    }
-  }
-
   changeCV() {
     cv.clear();
     notifyListeners();
@@ -707,20 +688,72 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
             final userBox = sl<Box<User>>();
             
             box.put(BoxKeys.enableAuth, true);
-            box.put(BoxKeys.usertoken, r.data?.token);
-            box.put(BoxKeys.userTeam, selectedTeam.value); // Store team selection
             
-            // Token expiration and refresh token are now saved in the repository
-            // If not saved there (e.g., for WeFix Team), set a default expiration
-            final expiresAt = box.get('${BoxKeys.usertoken}_expiresAt');
-            if (expiresAt == null) {
-              // Use default expiration from environment variables
-              final expiresInSeconds = AppLinks.tokenDefaultExpirationHours * 60 * 60;
-              final tokenExpiresAt = DateTime.now().add(Duration(seconds: expiresInSeconds));
-              box.put('${BoxKeys.usertoken}_expiresAt', tokenExpiresAt.toIso8601String());
+            // Save access token - ensure it's not null
+            final accessToken = r.data?.token;
+            if (accessToken != null && accessToken.toString().isNotEmpty) {
+              box.put(BoxKeys.usertoken, accessToken);
+              log('Access token saved successfully');
+            } else {
+              log('WARNING: Access token is null or empty!');
             }
             
-            userBox.put(BoxKeys.userData, r.data!.user!);
+            // Store team selection - critical for token refresh
+            box.put(BoxKeys.userTeam, selectedTeam.value);
+            log('Team saved: ${selectedTeam.value}');
+            
+            // Save refresh token if provided (only for B2B Team)
+            if (r.data?.refreshToken != null && r.data!.refreshToken!.isNotEmpty) {
+              box.put('${BoxKeys.usertoken}_refresh', r.data!.refreshToken);
+              log('Refresh token saved successfully');
+            } else {
+              // WeFix Team doesn't provide refresh tokens - this is expected
+              if (selectedTeam.value == 'WeFix Team') {
+                log('WeFix Team login - No refresh token (expected, WeFix Team uses access token only)');
+              } else {
+                log('WARNING: Refresh token is null or empty for B2B Team!');
+              }
+            }
+            
+            // Token expiration - save for both B2B and WeFix Team
+            // B2B Team: Saved in repository from token response
+            // WeFix Team: Need to set default expiration (no refresh token, so expiration is critical)
+            final expiresAt = box.get('${BoxKeys.usertoken}_expiresAt');
+            if (expiresAt == null) {
+              // Calculate expiration time based on expiresIn from response or use default
+              int expiresInSeconds;
+              if (r.data?.expiresIn != null) {
+                // expiresIn can be int or String from backend
+                expiresInSeconds = r.data!.expiresIn is int 
+                    ? r.data!.expiresIn as int
+                    : int.tryParse(r.data!.expiresIn.toString()) ?? (AppLinks.tokenDefaultExpirationHours * 60 * 60);
+              } else {
+                // Use default expiration from environment variables
+                expiresInSeconds = AppLinks.tokenDefaultExpirationHours * 60 * 60;
+              }
+              final tokenExpiresAt = DateTime.now().add(Duration(seconds: expiresInSeconds));
+              box.put('${BoxKeys.usertoken}_expiresAt', tokenExpiresAt.toIso8601String());
+              log('Token expiration saved: ${tokenExpiresAt.toIso8601String()} (Team: ${selectedTeam.value})');
+            } else {
+              log('Token expiration already saved: $expiresAt');
+            }
+            
+            // Save user data - ensure it's not null
+            if (r.data?.user != null) {
+              userBox.put(BoxKeys.userData, r.data!.user!);
+              log('User data saved successfully - Name: ${r.data!.user!.fullName ?? r.data!.user!.name}, Team: ${selectedTeam.value}, Role: ${r.data!.user!.userRoleId}');
+            } else {
+              log('ERROR: User data is null! Cannot save user.');
+            }
+            
+            // Verify all critical data is saved
+            final savedToken = box.get(BoxKeys.usertoken);
+            final savedRefreshToken = box.get('${BoxKeys.usertoken}_refresh');
+            final savedTeam = box.get(BoxKeys.userTeam);
+            final savedUser = userBox.get(BoxKeys.userData);
+            
+            log('Login verification - Token: ${savedToken != null}, RefreshToken: ${savedRefreshToken != null}, Team: $savedTeam, User: ${savedUser != null}');
+            
             sendOTPState.value = SendState.success;
             return GlobalContext.context.push(RouterKey.layout);
           },
@@ -878,6 +911,8 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> authenticate(BuildContext context) async {
     bool authenticated = false;
+    User? user;
+    
     try {
       SmartDialog.showLoading(
         msg: AppText(context, isFunction: true).loading,
@@ -890,21 +925,176 @@ class AuthProvider extends ChangeNotifier with WidgetsBindingObserver {
           );
         },
       );
+      
       authenticated = await LocalAuthentication().authenticate(
         localizedReason: "Scan yore finger to authentecate",
         options: const AuthenticationOptions(biometricOnly: true, stickyAuth: false),
       );
 
       if (authenticated) {
-        sl<Box>(instanceName: BoxKeys.appBox).put(BoxKeys.enableAuth, true);
-        SmartDialog.dismiss();
-        context.go(RouterKey.layout);
+        // Load user data from storage
+        final userBox = sl<Box<User>>();
+        user = userBox.get(BoxKeys.userData);
+        
+        // Load tokens from storage (they should already be there from previous login)
+        final box = sl<Box>(instanceName: BoxKeys.appBox);
+        final token = box.get(BoxKeys.usertoken);
+        final refreshToken = box.get('${BoxKeys.usertoken}_refresh');
+        final tokenExpiresAt = box.get('${BoxKeys.usertoken}_expiresAt');
+        final storedTeam = box.get(BoxKeys.userTeam);
+        final currentTeam = selectedTeam.value;
+        
+        log('Biometric auth successful - User: ${user?.fullName ?? user?.name ?? "null"}, Stored Team: $storedTeam, Current Team: $currentTeam');
+        log('Token exists: ${token != null}, RefreshToken exists: ${refreshToken != null}, ExpiresAt: $tokenExpiresAt');
+        
+        // CRITICAL: Validate that stored user's team matches currently selected team
+        // Prevent cross-team fingerprint authentication
+        if (storedTeam != null && storedTeam != currentTeam) {
+          log('Team mismatch detected - Stored: $storedTeam, Current: $currentTeam');
+          SmartDialog.dismiss();
+          SmartDialog.show(
+            builder: (context) => WidgetDilog(
+              isError: true,
+              title: AppText(context).warning,
+              message: storedTeam == 'B2B Team'
+                  ? 'This fingerprint is for B2B Team. Please select B2B Team to use fingerprint authentication.'
+                  : 'This fingerprint is for WeFix Team. Please select WeFix Team to use fingerprint authentication.',
+              cancelText: AppText(context).back,
+              onCancel: () => SmartDialog.dismiss(),
+            ),
+          );
+          return;
+        }
+        
+        // If no stored team but user exists, this is an old session - require re-login
+        if (storedTeam == null && user != null) {
+          log('No team stored for existing user - requiring re-login');
+          SmartDialog.dismiss();
+          SmartDialog.show(
+            builder: (context) => WidgetDilog(
+              isError: true,
+              title: AppText(context).warning,
+              message: 'Session expired. Please login again.',
+              cancelText: AppText(context).back,
+              onCancel: () => SmartDialog.dismiss(),
+            ),
+          );
+          return;
+        }
+        
+        final userTeam = storedTeam ?? currentTeam;
+        
+        // Verify we have valid user data AND at least a token or refresh token
+        // Strategy differs by team:
+        // - B2B Team: Need refresh token OR access token
+        // - WeFix Team: Need access token (no refresh token available)
+        final bool hasValidAuth = user != null && (
+          token != null || 
+          (refreshToken != null && userTeam == 'B2B Team') ||
+          (token != null && userTeam == 'WeFix Team')
+        );
+        
+        if (hasValidAuth) {
+          // B2B Team: If we have refresh token but no access token, try to refresh it first
+          if (userTeam == 'B2B Team' && token == null && refreshToken != null) {
+            log('B2B Team: Access token missing but refresh token exists - attempting refresh...');
+            try {
+              final refreshed = await refreshAccessToken();
+              if (refreshed) {
+                final newToken = box.get(BoxKeys.usertoken);
+                log('B2B Team: Token refreshed successfully: ${newToken != null}');
+              } else {
+                log('B2B Team: Token refresh failed during biometric auth');
+                SmartDialog.dismiss();
+                SmartDialog.show(
+                  builder: (context) => WidgetDilog(
+                    isError: true,
+                    title: AppText(context).warning,
+                    message: 'Failed to refresh authentication. Please login again.',
+                    cancelText: AppText(context).back,
+                    onCancel: () => SmartDialog.dismiss(),
+                  ),
+                );
+                return;
+              }
+            } catch (e) {
+              log('Error refreshing token during biometric auth: $e');
+              SmartDialog.dismiss();
+              SmartDialog.show(
+                builder: (context) => WidgetDilog(
+                  isError: true,
+                  title: AppText(context).warning,
+                  message: 'Authentication error. Please login again.',
+                  cancelText: AppText(context).back,
+                  onCancel: () => SmartDialog.dismiss(),
+                ),
+              );
+              return;
+            }
+          } else if (userTeam == 'WeFix Team' && token == null) {
+            // WeFix Team: No refresh token available, need access token
+            log('WeFix Team: Access token missing - cannot authenticate with fingerprint');
+            SmartDialog.dismiss();
+            SmartDialog.show(
+              builder: (context) => WidgetDilog(
+                isError: true,
+                title: AppText(context).warning,
+                message: 'Authentication token expired. Please login again.',
+                cancelText: AppText(context).back,
+                onCancel: () => SmartDialog.dismiss(),
+              ),
+            );
+            return;
+          }
+          
+          // Mark as authenticated
+          box.put(BoxKeys.enableAuth, true);
+          
+          // Ensure team is set and matches current selection
+          if (userTeam != currentTeam) {
+            box.put(BoxKeys.userTeam, currentTeam);
+            log('Team updated to match current selection: $currentTeam');
+          }
+          
+          SmartDialog.dismiss();
+          context.go(RouterKey.layout);
+        } else {
+          SmartDialog.dismiss();
+          String errorMessage = AppText(context).userDataNotFoundAccessDenied;
+          if (user == null) {
+            errorMessage = AppText(context).userDataNotFoundAccessDenied;
+          } else if (token == null && refreshToken == null) {
+            errorMessage = 'No authentication tokens found. Please login again.';
+          }
+          
+          SmartDialog.show(
+            builder: (context) => WidgetDilog(
+              isError: true,
+              title: AppText(context).warning,
+              message: errorMessage,
+              cancelText: AppText(context).back,
+              onCancel: () => SmartDialog.dismiss(),
+            ),
+          );
+        }
       } else {
         SmartDialog.dismiss();
       }
     } on PlatformException catch (e) {
       SmartDialog.dismiss();
-      log(e.toString());
+      log('Biometric authentication error: $e');
+      SmartDialog.show(
+        builder: (context) => WidgetDilog(
+          isError: true,
+          title: AppText(context).warning,
+          message: 'Biometric authentication failed. Please try again.',
+          cancelText: AppText(context).back,
+          onCancel: () => SmartDialog.dismiss(),
+        ),
+      );
+    } catch (e) {
+      SmartDialog.dismiss();
+      log('Error during biometric authentication: $e');
     }
   }
 

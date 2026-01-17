@@ -24,6 +24,11 @@ mixin _$UserModel {
   bool? get status => throw _privateConstructorUsedError;
   @JsonKey(name: "token")
   String? get token => throw _privateConstructorUsedError;
+  @JsonKey(name: "refreshToken")
+  String? get refreshToken => throw _privateConstructorUsedError;
+  @JsonKey(name: "expiresIn")
+  dynamic get expiresIn =>
+      throw _privateConstructorUsedError; // Can be int or String from backend
   @JsonKey(name: "message")
   String? get message => throw _privateConstructorUsedError;
   @JsonKey(name: "user")
@@ -43,6 +48,8 @@ abstract class $UserModelCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: "status") bool? status,
       @JsonKey(name: "token") String? token,
+      @JsonKey(name: "refreshToken") String? refreshToken,
+      @JsonKey(name: "expiresIn") dynamic expiresIn,
       @JsonKey(name: "message") String? message,
       @JsonKey(name: "user") User? user});
 
@@ -64,6 +71,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   $Res call({
     Object? status = freezed,
     Object? token = freezed,
+    Object? refreshToken = freezed,
+    Object? expiresIn = freezed,
     Object? message = freezed,
     Object? user = freezed,
   }) {
@@ -76,6 +85,14 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String?,
+      refreshToken: freezed == refreshToken
+          ? _value.refreshToken
+          : refreshToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      expiresIn: freezed == expiresIn
+          ? _value.expiresIn
+          : expiresIn // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -111,6 +128,8 @@ abstract class _$$UserModelImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: "status") bool? status,
       @JsonKey(name: "token") String? token,
+      @JsonKey(name: "refreshToken") String? refreshToken,
+      @JsonKey(name: "expiresIn") dynamic expiresIn,
       @JsonKey(name: "message") String? message,
       @JsonKey(name: "user") User? user});
 
@@ -131,6 +150,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
   $Res call({
     Object? status = freezed,
     Object? token = freezed,
+    Object? refreshToken = freezed,
+    Object? expiresIn = freezed,
     Object? message = freezed,
     Object? user = freezed,
   }) {
@@ -143,6 +164,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String?,
+      refreshToken: freezed == refreshToken
+          ? _value.refreshToken
+          : refreshToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      expiresIn: freezed == expiresIn
+          ? _value.expiresIn
+          : expiresIn // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -161,6 +190,8 @@ class _$UserModelImpl implements _UserModel {
   const _$UserModelImpl(
       {@JsonKey(name: "status") this.status,
       @JsonKey(name: "token") this.token,
+      @JsonKey(name: "refreshToken") this.refreshToken,
+      @JsonKey(name: "expiresIn") this.expiresIn,
       @JsonKey(name: "message") this.message,
       @JsonKey(name: "user") this.user});
 
@@ -174,6 +205,13 @@ class _$UserModelImpl implements _UserModel {
   @JsonKey(name: "token")
   final String? token;
   @override
+  @JsonKey(name: "refreshToken")
+  final String? refreshToken;
+  @override
+  @JsonKey(name: "expiresIn")
+  final dynamic expiresIn;
+// Can be int or String from backend
+  @override
   @JsonKey(name: "message")
   final String? message;
   @override
@@ -182,7 +220,7 @@ class _$UserModelImpl implements _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(status: $status, token: $token, message: $message, user: $user)';
+    return 'UserModel(status: $status, token: $token, refreshToken: $refreshToken, expiresIn: $expiresIn, message: $message, user: $user)';
   }
 
   @override
@@ -192,13 +230,17 @@ class _$UserModelImpl implements _UserModel {
             other is _$UserModelImpl &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.token, token) || other.token == token) &&
+            (identical(other.refreshToken, refreshToken) ||
+                other.refreshToken == refreshToken) &&
+            const DeepCollectionEquality().equals(other.expiresIn, expiresIn) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.user, user) || other.user == user));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, status, token, message, user);
+  int get hashCode => Object.hash(runtimeType, status, token, refreshToken,
+      const DeepCollectionEquality().hash(expiresIn), message, user);
 
   @JsonKey(ignore: true)
   @override
@@ -218,6 +260,8 @@ abstract class _UserModel implements UserModel {
   const factory _UserModel(
       {@JsonKey(name: "status") final bool? status,
       @JsonKey(name: "token") final String? token,
+      @JsonKey(name: "refreshToken") final String? refreshToken,
+      @JsonKey(name: "expiresIn") final dynamic expiresIn,
       @JsonKey(name: "message") final String? message,
       @JsonKey(name: "user") final User? user}) = _$UserModelImpl;
 
@@ -231,6 +275,12 @@ abstract class _UserModel implements UserModel {
   @JsonKey(name: "token")
   String? get token;
   @override
+  @JsonKey(name: "refreshToken")
+  String? get refreshToken;
+  @override
+  @JsonKey(name: "expiresIn")
+  dynamic get expiresIn;
+  @override // Can be int or String from backend
   @JsonKey(name: "message")
   String? get message;
   @override

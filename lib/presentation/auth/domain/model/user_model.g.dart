@@ -120,6 +120,8 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
     _$UserModelImpl(
       status: json['status'] as bool?,
       token: json['token'] as String?,
+      refreshToken: json['refreshToken'] as String?,
+      expiresIn: json['expiresIn'],
       message: json['message'] as String?,
       user: json['user'] == null
           ? null
@@ -130,6 +132,8 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
     <String, dynamic>{
       'status': instance.status,
       'token': instance.token,
+      'refreshToken': instance.refreshToken,
+      'expiresIn': instance.expiresIn,
       'message': instance.message,
       'user': instance.user,
     };

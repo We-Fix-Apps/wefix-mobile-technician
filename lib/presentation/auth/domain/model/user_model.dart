@@ -18,6 +18,8 @@ class UserModel with _$UserModel {
   const factory UserModel({
     @JsonKey(name: "status") bool? status,
     @JsonKey(name: "token") String? token,
+    @JsonKey(name: "refreshToken") String? refreshToken,
+    @JsonKey(name: "expiresIn") dynamic expiresIn, // Can be int or String from backend
     @JsonKey(name: "message") String? message,
     @JsonKey(name: "user") User? user,
   }) = _UserModel;

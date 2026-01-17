@@ -87,10 +87,10 @@ class DrawerWidget extends StatelessWidget {
     final token = box.get(BoxKeys.usertoken);
     final userTeam = box.get(BoxKeys.userTeam);
     
-    // Call logout API to clear token from database
-    if (token != null && token.toString().isNotEmpty) {
+    // Call logout API only for B2B Team (WeFix Team doesn't have logout endpoint)
+    if (userTeam == 'B2B Team' && token != null && token.toString().isNotEmpty) {
       try {
-        final serverUrl = (userTeam == 'B2B Team') ? AppLinks.serverTMMS : AppLinks.server;
+        final serverUrl = AppLinks.serverTMMS;
         final dio = Dio();
         await dio.post(
           '$serverUrl${AppLinks.b2bLogout}',
@@ -102,17 +102,37 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
         );
-        log('Logout API called successfully');
+        log('B2B Logout API called successfully');
       } catch (e) {
-        log('Error calling logout API: $e');
+        log('Error calling B2B logout API: $e');
         // Continue with local logout even if API call fails
       }
+    } else if (userTeam == 'WeFix Team') {
+      log('WeFix Team logout - skipping API call (no logout endpoint)');
     }
     
-    // Clear local storage
+    // Clear local storage - but keep user data and tokens for fingerprint authentication
+    // Strategy:
+    // - B2B Team: Keep refresh token (can refresh access token), clear access token
+    // - WeFix Team: Keep access token (no refresh token available), keep it for fingerprint
     box.delete(BoxKeys.enableAuth);
-    box.delete(BoxKeys.usertoken);
-    box.delete(BoxKeys.userTeam);
+    
+    if (userTeam == 'B2B Team') {
+      // B2B Team: Clear access token, keep refresh token for fingerprint
+      box.delete(BoxKeys.usertoken);
+      // Keep refresh token, user data, and team for fingerprint authentication
+      log('B2B Team logout - Access token cleared, refresh token kept for fingerprint');
+    } else if (userTeam == 'WeFix Team') {
+      // WeFix Team: Keep access token (no refresh token), keep it for fingerprint
+      // Don't delete access token - WeFix Team doesn't have refresh tokens
+      log('WeFix Team logout - Access token kept for fingerprint (no refresh token available)');
+    } else {
+      // Fallback: Clear access token if team is unknown
+      box.delete(BoxKeys.usertoken);
+    }
+    
+    // Always keep user data, team, and refresh token (if exists) for fingerprint authentication
+    // User data box is kept for fingerprint authentication
     
     if (context.mounted) {
       context.go(RouterKey.login);

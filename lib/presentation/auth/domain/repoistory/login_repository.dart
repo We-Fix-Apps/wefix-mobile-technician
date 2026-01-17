@@ -204,6 +204,8 @@ class LoginRepositoryImpl implements LoginRepository {
             final userModelData = {
               'status': true,
               'token': accessToken,
+              'refreshToken': tokenInfo?['refreshToken'],
+              'expiresIn': tokenInfo?['expiresIn'],
               'message': responseData['message'] ?? 'Authentication successful',
               'user': userData != null ? {
                 // Core backend fields
